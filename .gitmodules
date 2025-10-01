@@ -1,0 +1,3 @@
+[submodule "submodules/FABEO"]
+	path = submodules/FABEO
+	url = https://github.com/DoreenRiepel/FABEO.git
