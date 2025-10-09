@@ -1,0 +1,68 @@
+{
+    "resourceType": "Encounter",
+    "id": "encounter-patient-d",
+    "identifier": [
+        {
+            "use": "official",
+            "value": "Encounter_Diego_20231102"
+        }
+    ],
+    "status": "completed",
+    "class": [
+        {
+            "coding": [
+                {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                    "code": "IMP",
+                    "display": "inpatient encounter"
+                }
+            ]
+        }
+    ],
+    "priority": {
+        "coding": [
+            {
+                "system": "http://snomed.info/sct",
+                "code": "394849002",
+                "display": "Routine inpatient"
+            }
+        ]
+    },
+    "type": [
+        {
+            "coding": [
+                {
+                    "system": "http://snomed.info/sct",
+                    "code": "183807002",
+                    "display": "Hospital admission"
+                }
+            ]
+        }
+    ],
+    "subject": {
+        "reference": "Patient/patient-d",
+        "display": "Diego André Dias"
+    },
+    "serviceProvider": {
+        "reference": "Organization/1"
+    },
+    "participant": [
+        {
+            "actor": {
+                "reference": "Practitioner/104",
+                "display": "Dr. Tatiana Moura"
+            }
+        }
+    ],
+    "reason": [
+        {
+            "value": [
+                {
+                    "concept": {
+                        "text": "Hospitalization for pneumonia and monitoring of oxygen saturation."
+                    }
+                }
+            ]
+        }
+    ]
+}

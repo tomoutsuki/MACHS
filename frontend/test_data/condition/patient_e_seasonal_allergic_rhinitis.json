@@ -1,0 +1,15 @@
+{
+  "resourceType": "Condition",
+  "id": "cond-allergy-e",
+  "clinicalStatus": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active" }] },
+  "verificationStatus": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status", "code": "provisional" }] },
+  "category": [{ "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/condition-category", "code": "problem-list-item" }] }],
+  "severity": { "coding": [{ "system": "http://snomed.info/sct", "code": "255604002", "display": "Mild" }] },
+  "code": { "coding": [{ "system": "http://snomed.info/sct", "code": "367498001", "display": "Seasonal allergic rhinitis (disorder)" }] },
+  "bodySite": [{ "coding": [{ "system": "http://snomed.info/sct", "code": "46030003", "display": "Nasal cavity structure" }] }],
+  "subject": { "reference": "Patient/patient-e", "display": "Eduarda Cristina Esteves" },
+  "onsetDateTime": "2024-08-20",
+  "recordedDate": "2024-08-25",
+  "asserter": { "reference": "Practitioner/f201" },
+  "note": [{ "text": "Patient reports sneezing and congestion during pollen season; uses antihistamines as needed." }]
+}

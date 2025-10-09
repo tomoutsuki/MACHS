@@ -1,0 +1,68 @@
+{
+    "resourceType": "Encounter",
+    "id": "encounter-patient-e",
+    "identifier": [
+        {
+            "use": "official",
+            "value": "Encounter_Eduarda_20231215"
+        }
+    ],
+    "status": "completed",
+    "class": [
+        {
+            "coding": [
+                {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                    "code": "AMB",
+                    "display": "ambulatory"
+                }
+            ]
+        }
+    ],
+    "priority": {
+        "coding": [
+            {
+                "system": "http://snomed.info/sct",
+                "code": "394849002",
+                "display": "Routine"
+            }
+        ]
+    },
+    "type": [
+        {
+            "coding": [
+                {
+                    "system": "http://snomed.info/sct",
+                    "code": "185349003",
+                    "display": "Gynecological examination"
+                }
+            ]
+        }
+    ],
+    "subject": {
+        "reference": "Patient/patient-e",
+        "display": "Eduarda Cristina Esteves"
+    },
+    "serviceProvider": {
+        "reference": "Organization/1"
+    },
+    "participant": [
+        {
+            "actor": {
+                "reference": "Practitioner/105",
+                "display": "Dr. Camila Tavares"
+            }
+        }
+    ],
+    "reason": [
+        {
+            "value": [
+                {
+                    "concept": {
+                        "text": "Routine gynecological check-up with HPV vaccine follow-up."
+                    }
+                }
+            ]
+        }
+    ]
+}

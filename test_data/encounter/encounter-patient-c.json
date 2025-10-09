@@ -1,0 +1,68 @@
+{
+    "resourceType": "Encounter",
+    "id": "encounter-patient-c",
+    "identifier": [
+        {
+            "use": "official",
+            "value": "Encounter_Carla_20230812"
+        }
+    ],
+    "status": "completed",
+    "class": [
+        {
+            "coding": [
+                {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                    "code": "AMB",
+                    "display": "ambulatory"
+                }
+            ]
+        }
+    ],
+    "priority": {
+        "coding": [
+            {
+                "system": "http://snomed.info/sct",
+                "code": "17621005",
+                "display": "Normal"
+            }
+        ]
+    },
+    "type": [
+        {
+            "coding": [
+                {
+                    "system": "http://snomed.info/sct",
+                    "code": "11429006",
+                    "display": "Consultation"
+                }
+            ]
+        }
+    ],
+    "subject": {
+        "reference": "Patient/patient-c",
+        "display": "Carla Fernanda Cardoso"
+    },
+    "serviceProvider": {
+        "reference": "Organization/1"
+    },
+    "participant": [
+        {
+            "actor": {
+                "reference": "Practitioner/103",
+                "display": "Dr. André Paiva"
+            }
+        }
+    ],
+    "reason": [
+        {
+            "value": [
+                {
+                    "concept": {
+                        "text": "Patient reported persistent migraines; advised MRI and neurologist referral."
+                    }
+                }
+            ]
+        }
+    ]
+}

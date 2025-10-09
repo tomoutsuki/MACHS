@@ -1,0 +1,48 @@
+{
+  "samplePatientData": {
+    "patientId": "PAT-SAMPLE-001",
+    "name": "John Doe",
+    "age": 45,
+    "gender": "male",
+    "diagnosis": "Hypertension",
+    "bloodPressure": {
+      "systolic": 140,
+      "diastolic": 90
+    },
+    "medications": [
+      {
+        "name": "Lisinopril",
+        "dosage": "10mg",
+        "frequency": "once daily"
+      }
+    ],
+    "lastVisit": "2025-01-07",
+    "nextAppointment": "2025-02-07",
+    "notes": "Patient responding well to medication. Continue current treatment."
+  },
+  "sampleEncryptedData": {
+    "scheme": "CP-ABE",
+    "policy": "(role:doctor AND department:cardiology)",
+    "encrypted_data": "ENC_CP-ABE_eyJzY2hlbWUiOiJDUC1BQkUiLCJwb2xpY3kiOiIocm9sZTpkb2N0b3IgQU5EIGRlcGFydG1lbnQ6Y2FyZGlvbG9neSwiLCJkYXRhIjoie1wicGF0aWVudElkXCI6XCJQQVQtU0FNUExFLTAwMVwiLFwibmFtZVwiOlwiSm9obiBEb2VcIixcImFnZVwiOjQ1LFwiZ2VuZGVyXCI6XCJtYWxlXCIsXCJkaWFnbm9zaXNcIjpcIkh5cGVydGVuc2lvblwifSIsImVuY3J5cHRlZCI6dHJ1ZSwidGltZXN0YW1wIjoiMjAyNS0wMS0wOFQxMDozMDowMFoifQ==",
+    "timestamp": "2025-01-08T10:30:00Z"
+  },
+  "samplePolicies": [
+    "(role:doctor)",
+    "(role:doctor AND department:cardiology)",
+    "(role:doctor AND clearance:high)",
+    "(role:nurse AND department:emergency)",
+    "(role:admin)",
+    "(role:researcher AND clearance:high)",
+    "((role:doctor OR role:nurse) AND department:cardiology)",
+    "(role:doctor AND (department:cardiology OR department:emergency))"
+  ],
+  "sampleAttributes": [
+    "role:doctor,department:cardiology",
+    "role:nurse,department:emergency",
+    "role:admin",
+    "role:researcher,clearance:high",
+    "role:doctor,department:emergency,clearance:high",
+    "role:patient",
+    "role:technician,department:radiology"
+  ]
+}

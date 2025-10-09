@@ -1,0 +1,162 @@
+{
+    "resourceType": "Patient",
+    "id": "patient-d",
+    "text": {
+        "status": "generated",
+        "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p class=\"res-header-id\"><b>Generated Narrative: Patient patient-d</b></p><p style=\"border: 1px #661aff solid; background-color: #e6e6ff; padding: 10px;\">Diego André Dias (official) Male, DoB: 1982-04-11 ( Health Card Number: NamingSystemCNS#813568233215309)</p></div>"
+    },
+    "extension": [
+        {
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-birthPlace",
+            "valueAddress": {
+                "city": "Curitiba",
+                "state": "PR",
+                "country": "Brasil"
+            }
+        },
+        {
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-genderIdentity",
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://snomed.info/sct",
+                        "code": "446151000124109",
+                        "display": "Identifies as male gender (finding)"
+                    }
+                ]
+            }
+        },
+        {
+            "url": "https://ips.saude.gov.br/fhir/StructureDefinition/raca-br-ips",
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "https://terminologia.saude.gov.br/fhir/CodeSystem/BRRacaCor",
+                        "code": "01",
+                        "display": "Branca"
+                    }
+                ]
+            }
+        },
+        {
+            "url": "https://ips.saude.gov.br/fhir/StructureDefinition/sexo-nascimento-br-ips",
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://hl7.org/fhir/administrative-gender",
+                        "code": "male",
+                        "display": "Male"
+                    }
+                ]
+            }
+        }
+    ],
+    "identifier": [
+        {
+            "use": "official",
+            "type": {
+                "coding": [
+                    {
+                        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        "code": "TAX",
+                        "display": "Tax ID number"
+                    }
+                ]
+            },
+            "system": "https://saude.gov.br/fhir/sid/cpf",
+            "value": "10702425399"
+        },
+        {
+            "use": "official",
+            "type": {
+                "coding": [
+                    {
+                        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        "code": "HC",
+                        "display": "Health Card Number"
+                    }
+                ]
+            },
+            "system": "https://saude.gov.br/fhir/sid/cns",
+            "value": "813568233215309"
+        }
+    ],
+    "name": [
+        {
+            "use": "official",
+            "family": "Dias",
+            "given": [
+                "Diego André"
+            ]
+        }
+    ],
+    "telecom": [
+        {
+            "system": "phone",
+            "value": "+55 41 7777-1111",
+            "use": "mobile"
+        }
+    ],
+    "gender": "male",
+    "birthDate": "1982-04-11",
+    "address": [
+        {
+            "use": "home",
+            "type": "both",
+            "text": "Av. Paraná, 2500, Centro Cívico, Curitiba, PR, 80000-000",
+            "line": [
+                "Av. Paraná, 2500"
+            ],
+            "city": "Curitiba",
+            "state": "PR",
+            "postalCode": "80000-000",
+            "country": "Brasil"
+        }
+    ],
+    "contact": [
+        {
+            "relationship": [
+                {
+                    "coding": [
+                        {
+                            "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+                            "code": "NOK",
+                            "display": "Next of Kin"
+                        }
+                    ]
+                }
+            ],
+            "name": {
+                "use": "official",
+                "family": "Ferreira",
+                "given": [
+                    "Ana"
+                ]
+            },
+            "telecom": [
+                {
+                    "system": "phone",
+                    "value": "+55 41 7777-1111",
+                    "use": "mobile"
+                },
+                {
+                    "system": "email",
+                    "value": "ana.ferreira@example.com",
+                    "use": "home"
+                }
+            ],
+            "address": {
+                "use": "home",
+                "text": "Rua XV de Novembro, 42, Curitiba, PR",
+                "line": [
+                    "Rua XV de Novembro"
+                ],
+                "city": "Curitiba",
+                "state": "PR",
+                "postalCode": "80000-000",
+                "country": "Brasil"
+            },
+            "gender": "female"
+        }
+    ]
+}

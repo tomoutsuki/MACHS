@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MACHS Hospital System</title>
+    
+    <!-- API Configuration for Docker/Development -->
+    <meta name="ehr-service-url" content="http://localhost:3001">
+    <meta name="crypto-service-url" content="http://localhost:8000">
+    
+    <link rel="stylesheet" href="hospital-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="hospital-container">
+        <!-- User Authentication Panel -->
+        <div id="auth-panel" class="auth-panel">
+            <div class="auth-content">
+                <h1><i class="fas fa-hospital"></i> MACHS Hospital System</h1>
+                <p>Medical Access Control with Homomorphic System</p>
+                
+                <div class="user-selection">
+                    <h3>Select User Profile</h3>
+                    <select id="user-select" class="user-dropdown">
+                        <option value="">-- Select User --</option>
+                        <option value="admin">Dr. Administrator (Admin - Full Access)</option>
+                        <option value="doctor">Dr. Silva (Doctor - Patient Data + Diagnoses)</option>
+                        <option value="nurse">Nurse Maria (Nurse - Basic Patient Data)</option>
+                        <option value="receptionist">Ana Reception (Receptionist - Demographics Only)</option>
+                        <option value="researcher">Dr. Research (Researcher - Anonymized Data)</option>
+                    </select>
+                    
+                    <button id="login-btn" class="login-btn" disabled>
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </div>
+                
+                <div class="auth-info">
+                    <p><strong>Note:</strong> This is a demonstration system with simulated user roles and permissions.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Hospital Interface -->
+        <div id="main-interface" class="main-interface hidden">
+            <!-- Header with User Info -->
+            <header class="hospital-header">
+                <div class="header-left">
+                    <h1><i class="fas fa-hospital"></i> MACHS Hospital</h1>
+                    <span class="department">Electronic Health Records System</span>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <span id="current-user-name" class="user-name"></span>
+                        <span id="current-user-role" class="user-role"></span>
+                        <button id="logout-btn" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Navigation -->
+            <nav class="main-nav">
+                <button class="nav-btn active" data-tab="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </button>
+                <button class="nav-btn" data-tab="patients">
+                    <i class="fas fa-users"></i> Patient Records
+                </button>
+                <button class="nav-btn" data-tab="search">
+                    <i class="fas fa-search"></i> Search Patients
+                </button>
+                <button class="nav-btn" data-tab="fabeo-test">
+                    <i class="fas fa-flask"></i> FABEO Test
+                </button>
+            </nav>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <!-- Dashboard Tab -->
+                <div id="dashboard-tab" class="tab-content active">
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <h3><i class="fas fa-users"></i> Total Patients</h3>
+                            <div class="stat-number" id="total-patients">-</div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3><i class="fas fa-eye"></i> Accessible Records</h3>
+                            <div class="stat-number" id="accessible-records">-</div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3><i class="fas fa-lock"></i> Restricted Records</h3>
+                            <div class="stat-number" id="restricted-records">-</div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3><i class="fas fa-shield-alt"></i> Your Permissions</h3>
+                            <div class="permissions-list" id="user-permissions"></div>
+                        </div>
+                    </div>
+
+                    <!-- Service Status -->
+                    <div class="status-panel">
+                        <h3>System Status</h3>
+                        <div class="status-grid">
+                            <div class="status-item">
+                                <span class="status-label">EHR Service:</span>
+                                <span id="ehr-status" class="status-indicator">Checking...</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Crypto Service:</span>
+                                <span id="crypto-status" class="status-indicator">Checking...</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">ABE Encryption:</span>
+                                <span id="abe-status" class="status-indicator">Checking...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient Records Tab -->
+                <div id="patients-tab" class="tab-content">
+                    <div class="patients-header">
+                        <h2>Patient Records</h2>
+                        <button id="add-patient-btn" class="primary-btn">
+                            <i class="fas fa-plus"></i> Add Patient
+                        </button>
+                    </div>
+
+                    <!-- Patient Data Table -->
+                    <div class="table-container">
+                        <table class="data-table" id="patients-table">
+                            <thead>
+                                <tr>
+                                    <th>Patient ID</th>
+                                    <th>Name</th>
+                                    <th>CPF</th>
+                                    <th>Age</th>
+                                    <th>Gender</th>
+                                    <th>Primary Diagnosis</th>
+                                    <th>Last Visit</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="patients-table-body">
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Loading indicator -->
+                    <div id="patients-loading" class="loading-indicator hidden">
+                        <i class="fas fa-spinner fa-spin"></i> Loading patient data...
+                    </div>
+                </div>
+
+                <!-- Search Tab -->
+                <div id="search-tab" class="tab-content">
+                    <div class="search-panel">
+                        <h2>Search Patient Records</h2>
+                        <p class="search-info">Search uses encrypted metadata for privacy-preserving queries</p>
+                        
+                        <div class="search-form">
+                            <div class="search-field">
+                                <label for="search-name">Patient Name:</label>
+                                <input type="text" id="search-name" placeholder="Enter patient name">
+                            </div>
+                            <div class="search-field">
+                                <label for="search-cpf">CPF:</label>
+                                <input type="text" id="search-cpf" placeholder="000.000.000-00">
+                            </div>
+                            <button id="search-btn" class="primary-btn">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                            <button id="clear-search-btn" class="secondary-btn">
+                                <i class="fas fa-times"></i> Clear
+                            </button>
+                        </div>
+
+                        <!-- Search Results -->
+                        <div id="search-results" class="search-results">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FABEO Test Tab -->
+                <div id="fabeo-test-tab" class="tab-content">
+                    <div class="fabeo-panel">
+                        <h2>FABEO Encryption Testing</h2>
+                        <p class="fabeo-info">Test Attribute-Based Encryption (ABE) with custom data and policies</p>
+                        
+                        <!-- Encryption Section -->
+                        <div class="fabeo-section">
+                            <h3>Encrypt Data</h3>
+                            <div class="form-group">
+                                <label for="encrypt-data">Data to Encrypt:</label>
+                                <textarea id="encrypt-data" placeholder="Enter data to encrypt..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="encrypt-policy">Access Policy:</label>
+                                <input type="text" id="encrypt-policy" placeholder="e.g., (doctor AND cardiology) OR admin">
+                            </div>
+                            <button id="encrypt-btn" class="primary-btn">
+                                <i class="fas fa-lock"></i> Encrypt
+                            </button>
+                            <div id="encrypt-result" class="result-area"></div>
+                        </div>
+
+                        <!-- Decryption Section -->
+                        <div class="fabeo-section">
+                            <h3>Decrypt Data</h3>
+                            <div class="form-group">
+                                <label for="decrypt-data">Encrypted Data:</label>
+                                <textarea id="decrypt-data" placeholder="Paste encrypted data here..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="user-attributes">Your Attributes:</label>
+                                <input type="text" id="user-attributes" placeholder="e.g., doctor, cardiology" readonly>
+                            </div>
+                            <button id="decrypt-btn" class="primary-btn">
+                                <i class="fas fa-unlock"></i> Decrypt
+                            </button>
+                            <div id="decrypt-result" class="result-area"></div>
+                        </div>
+
+                        <!-- Key Management -->
+                        <div class="fabeo-section">
+                            <h3>Key Management</h3>
+                            <button id="generate-keys-btn" class="secondary-btn">
+                                <i class="fas fa-key"></i> Generate New Keys
+                            </button>
+                            <button id="view-keys-btn" class="secondary-btn">
+                                <i class="fas fa-eye"></i> View Current Keys
+                            </button>
+                            <div id="key-management-result" class="result-area"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Add Patient Modal -->
+        <div id="add-patient-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add New Patient</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-patient-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="patient-name">Full Name *</label>
+                                <input type="text" id="patient-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="patient-cpf">CPF *</label>
+                                <input type="text" id="patient-cpf" placeholder="000.000.000-00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="patient-birth">Birth Date *</label>
+                                <input type="date" id="patient-birth" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="patient-gender">Gender *</label>
+                                <select id="patient-gender" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="patient-phone">Phone</label>
+                                <input type="tel" id="patient-phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="patient-email">Email</label>
+                                <input type="email" id="patient-email">
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="patient-address">Address</label>
+                                <textarea id="patient-address"></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="patient-diagnosis">Primary Diagnosis</label>
+                                <input type="text" id="patient-diagnosis">
+                            </div>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="secondary-btn" onclick="closeModal('add-patient-modal')">Cancel</button>
+                            <button type="submit" class="primary-btn">Add Patient</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Detail Modal -->
+        <div id="patient-detail-modal" class="modal hidden">
+            <div class="modal-content large">
+                <div class="modal-header">
+                    <h3 id="patient-detail-title">Patient Details</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="patient-detail-content">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="hospital-script.js"></script>
+</body>
+</html>

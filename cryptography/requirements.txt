@@ -1,0 +1,15 @@
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+python-multipart==0.0.6
+requests==2.31.0
+cryptography==41.0.7
+numpy==1.24.3
+python-dotenv==1.0.0
+
+# Note: Charm-crypto installation temporarily disabled due to compatibility issues
+# The system will run in simulation mode using standard cryptographic libraries
+# TODO: Re-enable when charm-crypto compatibility is resolved
+
+# FABEO integration will be implemented gradually
+# For now, the system uses simulation functions

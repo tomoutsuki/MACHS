@@ -1,26 +1,39 @@
 {
   "name": "machs",
   "version": "1.0.0",
-  "description": "A modular access control system simulating a real hospital environment, using FABEO-based Attribute-Based Encryption to secure Electronic Health Records",
+  "description": "Medical Access Control with Homomorphic System - ABE-based healthcare security demonstration",
   "main": "src/index.js",
   "scripts": {
-    "start": "docker-compose up --build"
+    "setup": "cd docker && docker-compose up --build -d",
+    "start": "cd docker && docker-compose up -d",
+    "stop": "cd docker && docker-compose down",
+    "logs": "cd docker && docker-compose logs -f",
+    "test": "chmod +x tests/integration-test.sh && ./tests/integration-test.sh",
+    "clean": "cd docker && docker-compose down -v && docker system prune -f"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tomoutsuki/MACHS.git"
   },
   "keywords": [
+    "healthcare",
     "EHR",
-    "Encryption",
-    "Cybersecurity",
+    "encryption",
     "ABE",
-    "FABEO"
+    "attribute-based-encryption",
+    "FABEO",
+    "charm-crypto",
+    "cybersecurity",
+    "medical-records",
+    "access-control"
   ],
   "author": "tomoutsuki",
-  "license": "LGPL-3.0-or-later",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/tomoutsuki/MACHS/issues"
   },
-  "homepage": "https://github.com/tomoutsuki/MACHS#readme"
+  "homepage": "https://github.com/tomoutsuki/MACHS#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
