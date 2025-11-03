@@ -201,6 +201,9 @@ storage/encounters/*
 storage/conditions/*
 !storage/conditions/.gitkeep
 
+# Test encrypted patient data
+encrypted_patients/
+
 # IDE and editor files
 .vscode/
 .idea/
