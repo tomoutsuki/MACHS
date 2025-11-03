@@ -1,468 +1,101 @@
-# MACHS - FABEO Isolated Testing Environment# MACHS - Medical Access Control with Homomorphic System
+# MACHS – Ambiente Isolado de Testes do FABEO
 
+**Branch:** `test-fabeo-isolated`
 
+Este repositório disponibiliza um ambiente **mínimo e isolado** para testes de criptografia ABE (Attribute-Based Encryption) utilizando o **FABEO (Fast Attribute-Based Encryption Operations)** [(Riepel, 2022))](https://github.com/DoreenRiepel/FABEO) O branch contém apenas os componentes criptográficos necessários para operações de encriptação/decriptação e geração de chaves, expostos via API REST.
 
-**Branch: `test-fabeo-isolated`** ✅ **CLEANED AND ISOLATED**A comprehensive system demonstrating Attribute-Based Encryption (ABE) in healthcare environments, featuring cryptographic modules with FABEO integration and an Electronic Health Records (EHR) system with encrypted patient data storage.
+> Para o sistema hospitalar completo (frontend, backend EHR e banco de dados), utilize os branches `main` ou `base-structure`.
 
+---
 
+## 1. Arquitetura do Sistema (Isolado)
 
-A minimal, isolated testing environment for FABEO (Fast Attribute-Based Encryption Operations) containing **ONLY** cryptographic components for ABE encryption/decryption testing.## 🏗️ System Architecture
+O ambiente isolado é composto por dois serviços principais, orquestrados via Docker Compose:
 
+* **Crypto API (porta 8001)**
 
+  * Python 3.8+ com FastAPI
+  * Endpoints REST para encriptação, decriptação, geração de chaves e verificação de saúde
+  * Documentação OpenAPI disponível em `/docs`
 
----MACHS consists of two main components that work together to provide secure medical data management:
+* **FABEO Service (porta 8002)**
 
+  * Python 2.7 com Charm-crypto 0.43 e Flask
+  * Implementações FABEO22 (CP-ABE e KP-ABE)
+  * Atendido pela Crypto API via HTTP
 
+* **Armazenamento em arquivos**
 
-## ⚡ What's in This Branch?### 1. Cryptography Modules (`cryptography/`)
+  * Estrutura `storage/` (vazia por padrão): `patients/`, `encounters/`, `conditions/`
+  * Destinada a armazenar artefatos criptografados quando necessário
 
-- **Technology**: Python with FastAPI
+---
 
-This branch is **strictly limited** to cryptographic modules:- **Purpose**: Exposes REST API endpoints for cryptographic operations using FABEO
+## 2. Escopo deste Branch
 
-- **Dependencies**: 
+### Inclui
 
-### ✅ Included Components  - [FABEO](https://github.com/abecryptools/FABEO) (included as Git submodule)
+* Submódulo **FABEO** (FABEO22) como Git submodule
+* **Crypto API Gateway** (FastAPI)
+* **FABEO Microservice** (Flask, Python 2.7 + Charm-crypto)
+* **Infraestrutura Docker** (Docker Compose)
+* **Scripts de teste** e **utilitários**
+* Suporte a múltiplos esquemas ABE (CP-ABE, KP-ABE, DFA, Waters11, Waters12) conforme implementado pelo FABEO
 
-- **FABEO Microservice** - Python 2.7 + Charm-crypto + Flask (Port 8002)  - FastAPI for REST API
+### Não inclui (disponível em outros branches)
 
-- **Crypto API Gateway** - Python 3.8+ + FastAPI (Port 8001)  - Multiple ABE schemes support
+* Frontend/UI e simulação do hospital → ver `main`
+* Backend EHR e banco de dados → ver `base-structure`
+* Dados de pacientes de exemplo → ver `base-structure`
 
-- **Docker Infrastructure** - Containerized services- **Features**:
+---
 
-- **FABEO Submodule** - Git submodule with FABEO22 implementation  - Multiple ABE schemes (CP-ABE, KP-ABE, DFA, Waters11, Waters12)
+## 3. Pré-requisitos
 
-- **Storage Structure** - File-based encrypted data storage (empty by default)  - RESTful API for encryption/decryption operations
+* Docker e Docker Compose
+* Git (para inicialização de submódulos)
 
-- **Test Scripts** - Validation and testing utilities  - Key generation and management
+---
 
-- **Documentation** - Comprehensive system docs  - Policy-based access control
+## 4. Obtenção do Código
 
-  - Encrypted file storage management
-
-### ❌ NOT Included (Available in Other Branches)
-
-- Frontend/UI components → See `base-structure` branch### 2. EHR System (`ehr-system/`)
-
-- EHR system backend → See `base-structure` branch- **Technology**: Node.js with Express and PostgreSQL
-
-- Database (PostgreSQL) → See `base-structure` branch- **Purpose**: Provides hospital system backend with metadata-only database and encrypted patient storage
-
-- Sample patient data → See `base-structure` branch- **Architecture**:
-
-- Full hospital simulation → See `main` branch  - **PostgreSQL**: Stores only metadata (patient IDs, file paths, timestamps)
-
-  - **Encrypted Storage**: Patient data encrypted using FABEO and stored in filesystem
-
----  - **Separation of Concerns**: Fast metadata queries + secure encrypted data
-
-- **Features**:
-
-## 🏗️ Isolated Architecture  - Patient metadata management
-
-  - Encrypted patient data storage using ABE
-
-```  - Medical records with fine-grained access control
-
-┌─────────────────────────────────────────────────────────────┐  - Complete audit logging
-
-│                  FABEO Isolated System                      │  - REST API for frontend integration
-
-├─────────────────────────────────────────────────────────────┤  - Integrated cryptography service communication
-
-│                                                             │
-
-│  ┌──────────────────────────────────────────────────────┐  │## 🔒 Security Features
-
-│  │     Crypto API Gateway (Port 8001)                   │  │
-
-│  │     - FastAPI + Python 3.8+                          │  │- **Data Separation**: Sensitive patient data never stored in database
-
-│  │     - REST API endpoints                             │  │- **Attribute-Based Encryption**: Fine-grained access control using ABE policies
-
-│  │     - OpenAPI documentation                          │  │- **Encryption at Rest**: All patient data encrypted using FABEO schemes
-
-│  └────────────────────┬─────────────────────────────────┘  │- **Audit Trail**: Complete logging of all data access attempts
-
-│                       │ HTTP                                │- **Policy-Based Access**: Configurable access policies per data type
-
-│                       ▼                                     │
-
-│  ┌──────────────────────────────────────────────────────┐  │## 🚀 Quick Start
-
-│  │     FABEO Service (Port 8002)                        │  │
-
-│  │     - Python 2.7 + Charm-crypto 0.43                 │  │### Prerequisites
-
-│  │     - FABEO22 CP-ABE & KP-ABE                        │  │- Docker and Docker Compose
-
-│  │     - Flask HTTP server                              │  │- Git (for submodules)
-
-│  └──────────────────────────────────────────────────────┘  │
-
-│                                                             │### Setup
-
-│  ┌──────────────────────────────────────────────────────┐  │1. **Clone the repository with submodules**:
-
-│  │     Storage (File System)                            │  │   ```bash
-
-│  │     - storage/patients/                              │  │   git clone --recursive https://github.com/tomoutsuki/MACHS.git
-
-│  │     - storage/encounters/                            │  │   cd MACHS
-
-│  │     - storage/conditions/                            │  │   ```
-
-│  └──────────────────────────────────────────────────────┘  │
-
-│                                                             │2. **Start the system with Docker Compose**:
-
-└─────────────────────────────────────────────────────────────┘   ```bash
-
-```   # Install dependencies and start all services
-
-   npm run setup
-
----   
-
-   # Or manually with Docker Compose
-
-## 🚀 Quick Start   cd docker
-
-   docker-compose up --build -d
-
-### Prerequisites   ```
-
-- Docker and Docker Compose
-
-- Git (for submodules)3. **Access the services**:
-
-   - **🏥 Hospital Interface**: http://localhost:3002/hospital
-
-### 1. Clone with Submodules   - **🔗 EHR System API**: http://localhost:3001
-
-```bash   - **🔐 Cryptography API**: http://localhost:8000
-
-git clone --recursive https://github.com/tomoutsuki/MACHS.git   - **🗄️ PostgreSQL Database**: localhost:5432
-
+```bash
+git clone --recursive https://github.com/tomoutsuki/MACHS.git
 cd MACHS
+git checkout test-fabeo-isolated
+```
 
-git checkout test-fabeo-isolated### Default Credentials
+Se o clone foi feito sem `--recursive`:
 
-```- **Username**: `admin`
-
-- **Password**: `admin123`
-
-If you already cloned without `--recursive`:
-
-```bash## 📁 Project Structure
-
+```bash
 git submodule update --init --recursive
-
-``````
-
-MACHS/
-
-### 2. Start FABEO Services├── cryptography/              # Python FastAPI cryptography service
-
-```bash│   ├── main.py               # FastAPI application
-
-cd docker│   ├── requirements.txt      # Python dependencies
-
-docker-compose up --build -d│   ├── services/            # Cryptography service logic
-
-```│   ├── models/              # Pydantic models
-
-│   └── utils/               # Utility functions
-
-Or use the Windows batch script:├── ehr-system/               # Node.js EHR system
-
-```bash│   ├── server.js            # Express server
-
-start-hospital-system.bat│   ├── package.json         # Node.js dependencies
-
-```│   ├── models/              # MongoDB models
-
-│   ├── routes/              # API routes
-
-### 3. Verify Services│   ├── middleware/          # Authentication middleware
-
-```bash│   ├── services/            # Business logic
-
-# Check health│   └── utils/               # Helper functions
-
-curl http://localhost:8001/health├── submodules/
-
-curl http://localhost:8002/health│   └── FABEO/               # Git submodule for FABEO library
-
-├── docker/                   # Docker configuration
-
-# View API documentation│   ├── docker-compose.yml   # Multi-service setup
-
-# Open in browser: http://localhost:8001/docs│   ├── Dockerfile.cryptography
-
-```│   ├── Dockerfile.ehr
-
-│   └── mongodb/             # MongoDB initialization
-
-### 4. Run Tests├── scripts/                  # Setup and utility scripts
-
-```bash└── docs/                     # Documentation
-
-python test_fabeo_isolated.py```
-
-```
-
-## 🔐 Cryptography Service API
-
----
-
-### Available Schemes
-
-## 📁 Project Structure- **CP-ABE**: `fabeo22cp`, `ac17cp`, `waters11cp`
-
-- **KP-ABE**: `fabeo22kp`, `ac17kp`
-
-```- **DFA**: `fabeo22dfa`, `waters12dfa`
-
-MACHS/ (test-fabeo-isolated branch)
-
-├── services/                    # FABEO Microservices### Key Endpoints
-
-│   ├── fabeo-service/          # Python 2.7 FABEO microservice```bash
-
-│   │   ├── main.py             # Flask HTTP server# Health check
-
-│   │   ├── Dockerfile          # Ubuntu 16.04 + Python 2.7 + CharmGET /health
-
-│   │   └── requirements.txt    # Python 2.7 dependencies
-
-│   └── crypto-api/             # Python 3.8+ API Gateway# Encrypt data
-
-│       ├── main.py             # FastAPI applicationPOST /encrypt
-
-│       ├── fabeo_client.py     # FABEO service client{
-
-│       ├── models.py           # Pydantic models  "data": "sensitive data",
-
-│       ├── standard_crypto.py  # AES/RSA implementations  "policy": "(role:doctor AND department:cardiology)",
-
-│       ├── Dockerfile          # Modern Python environment  "scheme": "fabeo22cp"
-
-│       └── requirements.txt    # Python 3.8+ dependencies}
-
-├── submodules/
-
-│   └── FABEO/                  # Git submodule (FABEO library)# Decrypt data  
-
-├── docker/                     # Docker configurationPOST /decrypt
-
-│   ├── docker-compose.yml      # Service definitions{
-
-│   ├── start-hospital-system.bat  "ciphertext": "encrypted_data",
-
-│   ├── stop-hospital-system.bat  "private_key": "user_attributes",
-
-│   └── README_DOCKER.md  "scheme": "fabeo22cp"
-
-├── storage/                    # Encrypted data storage (empty)}
-
-│   ├── patients/.gitkeep```
-
-│   ├── encounters/.gitkeep
-
-│   └── conditions/.gitkeep## 🏥 EHR System API
-
-├── docs/                       # Documentation
-
-│   ├── SYSTEM_ARCHITECTURE_DOCUMENTATION.md### Authentication
-
-│   ├── api-reference.md```bash
-
-│   └── ...POST /api/auth/login
-
-├── test_fabeo_isolated.py      # Isolated FABEO test script{
-
-├── test_fabeo_direct.py        # Direct FABEO library test  "username": "admin", 
-
-├── test_fabeo_proper_workflow.py  "password": "admin123"
-
-├── verify_fabeo_setup.py}
-
-├── .gitignore```
-
-├── .gitmodules
-
-├── LICENSE### Patient Management
-
-└── README.md                   # This file```bash
-
-```POST /api/patients
-
-Authorization: Bearer <token>
-
----{
-
-  "personalInfo": {
-
-## 🔐 FABEO Operations    "firstName": "John",
-
-    "lastName": "Doe",
-
-### Encryption    "dateOfBirth": "1990-01-01",
-
-```bash    "gender": "male",
-
-curl -X POST http://localhost:8001/encrypt \    "ssn": "123-45-6789"
-
-  -H "Content-Type: application/json" \  },
-
-  -d '{  "accessControl": {
-
-    "data": "Patient has diabetes",    "department": "cardiology",
-
-    "policy": "(doctor AND endocrinology) OR emergency",    "confidentialityLevel": "restricted"
-
-    "scheme": "CP-ABE"  }
-
-  }'}
-
-``````
-
-
-
-### Key Generation### Medical Records
-
-```bash```bash
-
-curl -X POST http://localhost:8001/keygen \POST /api/records
-
-  -H "Content-Type: application/json" \Authorization: Bearer <token>
-
-  -d '{{
-
-    "attributes": ["doctor", "endocrinology"],  "patientId": "PAT-12345",
-
-    "scheme": "CP-ABE"  "recordType": "diagnosis",
-
-  }'  "content": {
-
-```    "plaintext": {
-
-      "title": "Cardiac Assessment",
-
-### Decryption      "diagnosis": "Hypertension"
-
-```bash    }
-
-curl -X POST http://localhost:8001/decrypt_with_key \  },
-
-  -H "Content-Type: application/json" \  "encrypt": true,
-
-  -d '{  "accessPolicy": "(role:doctor AND department:cardiology)"
-
-    "ciphertext": "<encrypted_data>",}
-
-    "user_key": "<generated_key>",```
-
-    "scheme": "CP-ABE"
-
-  }'## 🧪 Quick Testing
-
-```
-
-1. **Start the system**:
-
----   ```bash
-
-   npm run setup
-
-## 📚 API Documentation   ```
-
-
-
-- **Swagger UI**: http://localhost:8001/docs2. **Test services**:
-
-- **ReDoc**: http://localhost:8001/redoc   ```bash
-
-- **OpenAPI JSON**: http://localhost:8001/openapi.json   # Health checks
-
-   curl http://localhost:3001/health
-
----   curl http://localhost:8000/health
-
-   
-
-## 🧪 Testing   # Login
-
-   curl -X POST http://localhost:3001/api/auth/login \
-
-### Run Automated Tests     -H "Content-Type: application/json" \
-
-```bash     -d '{"username": "admin", "password": "admin123"}'
-
-# Comprehensive isolated FABEO test   ```
-
-python test_fabeo_isolated.py
-
-## 🔧 Development
-
-# Direct FABEO library test
-
-python test_fabeo_direct.py### Individual Services
-
-```bash
-
-# Verify setup# Cryptography Service
-
-python verify_fabeo_setup.pycd cryptography && python main.py
-
-```
-
-# EHR System
-
-### Manual Testingcd ehr-system && npm start
-
-```bash
-
-# Health checks# MongoDB
-
-curl http://localhost:8001/healthdocker run -d -p 27017:27017 mongo:7.0
-
-curl http://localhost:8002/health```
-
-
-
-# Service info## 📄 License
-
-curl http://localhost:8001/info
-
-curl http://localhost:8002/infoMIT License - see [LICENSE](LICENSE) file for details.
-
 ```
 
 ---
 
-## 🔧 Docker Management
+## 5. Subida dos Serviços (Docker)
 
-### Start Services
 ```bash
 cd docker
 docker-compose up --build -d
 ```
 
-### View Logs
+Ver logs:
+
 ```bash
 docker-compose logs -f
 docker-compose logs -f fabeo-service
 docker-compose logs -f crypto-api
 ```
 
-### Stop Services
+Parar serviços:
+
 ```bash
 docker-compose down
 ```
 
-### Rebuild Services
+Rebuild sem cache:
+
 ```bash
 docker-compose build --no-cache
 docker-compose up -d
@@ -470,107 +103,254 @@ docker-compose up -d
 
 ---
 
-## 📖 Documentation
+## 6. Verificação Rápida
 
-Comprehensive documentation available in `docs/`:
+Saúde dos serviços:
 
-- **[System Architecture Documentation](docs/SYSTEM_ARCHITECTURE_DOCUMENTATION.md)** - Complete technical documentation
-- **[API Reference](docs/api-reference.md)** - API endpoint specifications
-- **[Docker README](docker/README_DOCKER.md)** - Docker deployment guide
-
----
-
-## 🔍 Available Schemes
-
-This FABEO implementation supports:
-
-- **FABEO22-CP-ABE** - Ciphertext-Policy ABE (primary)
-- **FABEO22-KP-ABE** - Key-Policy ABE
-- **AES** - Symmetric encryption (standard crypto)
-- **RSA** - Asymmetric encryption (standard crypto)
-
----
-
-## 🌿 Branch Information
-
-### Current Branch: `test-fabeo-isolated`
-- **Purpose**: Isolated FABEO cryptographic testing
-- **Components**: FABEO service + Crypto API only
-- **Use Case**: Testing ABE operations without full system
-
-### Other Branches
-- **`main`**: Complete hospital system with frontend
-- **`base-structure`**: Full system with EHR backend + database
-
-### Switch to Other Branches
 ```bash
-# Full hospital system
-git checkout main
+curl http://localhost:8001/health
+curl http://localhost:8002/health
+```
 
-# System with backend but testing focus
+Documentação da API (navegador):
+
+* Crypto API (OpenAPI/Swagger): `http://localhost:8001/docs`
+
+---
+
+## 7. API de Criptografia
+
+### Esquemas Disponíveis (conforme suporte do FABEO)
+
+* **CP-ABE**: `fabeo22cp`, `ac17cp`, `waters11cp`
+* **KP-ABE**: `fabeo22kp`, `ac17kp`
+* **DFA**: `fabeo22dfa`, `waters12dfa`
+* Criptografia padrão auxiliar: **AES** (simétrica) e **RSA** (assimétrica), quando aplicável
+
+> Verifique na Crypto API quais esquemas estão habilitados na configuração atual.
+
+### Endpoints (principais)
+
+**Saúde**
+
+```
+GET /health
+```
+
+**Encriptação**
+
+```
+POST /encrypt
+Content-Type: application/json
+
+{
+  "data": "texto sensível",
+  "policy": "(role:doctor AND department:cardiology)",
+  "scheme": "fabeo22cp"
+}
+```
+
+**Decriptação**
+
+```
+POST /decrypt
+Content-Type: application/json
+
+{
+  "ciphertext": "<dados_encriptados>",
+  "key": "<chave_do_usuário>",
+  "scheme": "fabeo22cp"
+}
+```
+
+**Geração de Chave**
+
+```
+POST /keygen
+Content-Type: application/json
+
+{
+  "attributes": ["role:doctor", "department:cardiology"],
+  "scheme": "fabeo22cp"
+}
+```
+
+**Exemplos com cURL**
+
+Encriptar:
+
+```bash
+curl -X POST http://localhost:8001/encrypt \
+  -H "Content-Type: application/json" \
+  -d '{
+    "data": "Paciente com diabetes",
+    "policy": "(doctor AND endocrinology) OR emergency",
+    "scheme": "fabeo22cp"
+  }'
+```
+
+Gerar chave:
+
+```bash
+curl -X POST http://localhost:8001/keygen \
+  -H "Content-Type: application/json" \
+  -d '{
+    "attributes": ["doctor", "endocrinology"],
+    "scheme": "fabeo22cp"
+  }'
+```
+
+Decriptar:
+
+```bash
+curl -X POST http://localhost:8001/decrypt \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ciphertext": "<encrypted_data>",
+    "key": "<generated_key>",
+    "scheme": "fabeo22cp"
+  }'
+```
+
+---
+
+## 8. Estrutura do Projeto (branch `test-fabeo-isolated`)
+
+```
+MACHS/
+├── services/
+│   ├── fabeo-service/              # Microserviço FABEO (Python 2.7)
+│   │   ├── main.py                 # Flask HTTP server
+│   │   ├── Dockerfile
+│   │   └── requirements.txt
+│   └── crypto-api/                 # API Gateway (Python 3.8+ FastAPI)
+│       ├── main.py                 # FastAPI application (porta 8001)
+│       ├── fabeo_client.py         # Cliente para o FABEO Service
+│       ├── models.py               # Modelos Pydantic
+│       ├── standard_crypto.py      # AES/RSA quando aplicável
+│       ├── Dockerfile
+│       └── requirements.txt
+├── submodules/
+│   └── FABEO/                      # Submódulo Git com implementação FABEO22
+├── docker/
+│   ├── docker-compose.yml
+│   ├── start-hospital-system.bat
+│   ├── stop-hospital-system.bat
+│   └── README_DOCKER.md
+├── storage/                        # Armazenamento baseado em arquivos (vazio)
+│   ├── patients/.gitkeep
+│   ├── encounters/.gitkeep
+│   └── conditions/.gitkeep
+├── docs/
+│   ├── SYSTEM_ARCHITECTURE_DOCUMENTATION.md
+│   ├── api-reference.md
+│   └── ...
+├── test_fabeo_isolated.py          # Teste isolado do FABEO
+├── test_fabeo_direct.py            # Teste direto da lib FABEO
+├── test_fabeo_proper_workflow.py   # Fluxo completo de teste
+├── verify_fabeo_setup.py           # Verificação de setup/local
+├── .gitignore
+├── .gitmodules
+├── LICENSE
+└── README.md
+```
+
+---
+
+## 9. Testes
+
+Executar testes automatizados (ambiente Python local; em Docker utilize os contêineres conforme sua configuração):
+
+```bash
+python test_fabeo_isolated.py
+python test_fabeo_direct.py
+python verify_fabeo_setup.py
+```
+
+---
+
+## 10. Resolução de Problemas (Troubleshooting)
+
+**Serviços não iniciam**
+
+```bash
+docker-compose ps
+docker-compose logs
+docker-compose down
+docker-compose up --build -d
+```
+
+**Problemas no FABEO Service**
+
+```bash
+docker-compose logs fabeo-service
+# Possíveis causas:
+# - Falha na inicialização do Charm-crypto
+# - Submódulo FABEO ausente/não inicializado
+# - Questões de compatibilidade com Python 2.7
+```
+
+**Submódulo ausente**
+
+```bash
+git submodule update --init --recursive
+# ou, no clone:
+# git clone --recursive https://github.com/tomoutsuki/MACHS.git
+```
+
+---
+
+## 11. Documentação
+
+Documentação adicional disponível em `docs/`:
+
+* `docs/SYSTEM_ARCHITECTURE_DOCUMENTATION.md` – Documentação técnica da arquitetura
+* `docs/api-reference.md` – Especificação dos endpoints da API
+* `docker/README_DOCKER.md` – Guia de implantação com Docker
+
+---
+
+## 12. Informações de Branches
+
+**Branch atual:** `test-fabeo-isolated`
+
+* Finalidade: testes de criptografia FABEO isolados
+* Componentes: apenas FABEO Service + Crypto API
+
+**Outros branches:**
+
+* `main` – sistema hospitalar completo com frontend
+* `base-structure` – backend EHR e banco de dados (estrutura base)
+
+Troca de branch:
+
+```bash
+git checkout main          # sistema completo
 git checkout base-structure
 ```
 
 ---
 
-## 🛠️ Troubleshooting
+## 13. Licença
 
-### Services Won't Start
-```bash
-# Check Docker status
-docker-compose ps
-
-# View logs
-docker-compose logs
-
-# Restart services
-docker-compose down
-docker-compose up --build -d
-```
-
-### FABEO Service Issues
-```bash
-# Check FABEO service logs
-docker-compose logs fabeo-service
-
-# Common issues:
-# - Charm-crypto initialization failure
-# - Missing FABEO submodule
-# - Python 2.7 compatibility issues
-```
-
-### Submodule Not Found
-```bash
-# Initialize submodules
-git submodule update --init --recursive
-
-# Or clone with submodules
-git clone --recursive https://github.com/tomoutsuki/MACHS.git
-```
+MIT License – consulte o arquivo [LICENSE](LICENSE).
 
 ---
 
-## 📄 License
+## 14. Referências
 
-MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
-## 🔗 References
-
-- **FABEO Paper**: Riepel & Wee, "FABEO: Fast Attribute-based Encryption with Optimal Security", ACM CCS 2022
-- **FABEO Repository**: https://github.com/abecryptools/FABEO
-- **Charm-crypto**: https://github.com/JHUISI/charm
+* Artigo FABEO: Riepel & Wee, “FABEO: Fast Attribute-based Encryption with Optimal Security”, ACM CCS 2022
+* Repositório FABEO: [https://github.com/abecryptools/FABEO](https://github.com/abecryptools/FABEO)
+* Charm-crypto: [https://github.com/JHUISI/charm](https://github.com/JHUISI/charm)
 
 ---
 
-## 📞 Support
+## 15. Suporte
 
-For issues or questions:
-1. Check the [documentation](docs/)
-2. Review [troubleshooting](#-troubleshooting) section
-3. Check Docker logs: `docker-compose logs`
+1. Consulte a documentação em `docs/`
+2. Revise a seção de resolução de problemas
+3. Verifique os logs do Docker com `docker-compose logs`
 
 ---
 
-**Note**: This is the isolated FABEO testing branch. For the complete hospital system with frontend and database, switch to the `main` or `base-structure` branch.
+**Nota:** Este branch é destinado a testes isolados de ABE com FABEO. Para o sistema hospitalar completo (frontend e banco de dados), utilize `main` ou `base-structure`.
