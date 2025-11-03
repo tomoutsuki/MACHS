@@ -1,8 +1,0 @@
-# This directory stores encrypted patient data files
-# Structure:
-# /storage/
-#   /patients/
-#     /{patient_id}/
-#       - medical_records.encrypted
-#       - personal_info.encrypted
-#       - documents/
