@@ -15,6 +15,13 @@ import logging
 import base64
 import pickle
 
+# Python 2/3 compatibility
+try:
+    unicode
+except NameError:
+    # Python 3
+    unicode = str
+
 # Add FABEO to Python path
 sys.path.insert(0, '/app/FABEO')
 
@@ -239,17 +246,26 @@ def encrypt():
         logger.info("Message type: %s", type(message))
         logger.info("Message content: %s", repr(message))
         
-        # Ensure policy is a string
-        if not isinstance(policy, str):
-            # In Python 2.7, we might get unicode objects
+        # Ensure policy is a string (handle Unicode in Python 2.7)
+        if isinstance(policy, unicode):
+            policy = policy.encode('utf-8')
+        elif not isinstance(policy, str):
             policy = str(policy)
         
-        # Ensure message is a string
-        if not isinstance(message, str):
-            message = str(message)
+        # Handle message encoding properly for Unicode strings (Portuguese characters)
+        # In Python 2.7, we need to encode Unicode strings to UTF-8 bytes first
+        if isinstance(message, unicode):
+            # Unicode string - encode to UTF-8 bytes for processing
+            message_bytes = message.encode('utf-8')
+        elif isinstance(message, str):
+            # Already a byte string - use as is (assume UTF-8)
+            message_bytes = message
+        else:
+            # Other types - convert to string first, then to UTF-8 bytes
+            message_bytes = str(message)
         
         logger.info("After conversion - Policy type: %s", type(policy))
-        logger.info("After conversion - Message type: %s", type(message))
+        logger.info("After conversion - Message bytes length: %s", len(message_bytes))
         logger.info("Public key type: %s", type(pk))
         logger.info("Scheme type: %s", type(cp_abe_scheme))
         
@@ -266,9 +282,7 @@ def encrypt():
         # Create a key stream from the GT element
         key_material = hashlib.sha256(str(random_gt_element)).digest()
         
-        # Simple stream cipher: XOR the message with expanded key material
-        message_bytes = message.encode('utf-8')
-        
+        # message_bytes already prepared above (UTF-8 encoded)
         # Expand key material to message length
         key_stream = ""
         for i in range(len(message_bytes)):
