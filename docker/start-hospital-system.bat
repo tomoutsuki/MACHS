@@ -14,6 +14,10 @@ echo.
 
 cd /d "%~dp0"
 
+echo Cleaning up old containers...
+docker-compose down
+
+echo.
 echo Building and starting services...
 docker-compose up --build -d
 
