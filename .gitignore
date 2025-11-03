@@ -201,12 +201,6 @@ storage/encounters/*
 storage/conditions/*
 !storage/conditions/.gitkeep
 
-# Legacy frontend files (not needed in isolated branch)
-frontend/
-ehr-system/
-test_data/
-src/
-
 # IDE and editor files
 .vscode/
 .idea/
