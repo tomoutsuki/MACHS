@@ -1,7 +1,7 @@
 # Modern Crypto API Gateway
-# Python 3.8+ environment for FastAPI and modern packages
+# Python 3.13 environment for FastAPI and modern packages
 
-FROM python:3.8-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 
