@@ -1,163 +1,50 @@
-services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres:16
-    container_name: machs-postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-machs_ehr}
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secure_password}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./postgresql/init:/docker-entrypoint-initdb.d
-    ports:
-      - "5432:5432"
-    networks:
-      - machs-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-machs_ehr}"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # Cryptography Service (Python FastAPI + FABEO + Charm)
-  cryptography:
+﻿services:
+  # FABEO Microservice (Python 2.7 + Charm + Ubuntu 16.04)
+  fabeo-service:
     build:
-      context: ../cryptography
-      dockerfile: ../docker/Dockerfile.cryptography
-    container_name: machs-cryptography
+      context: ..
+      dockerfile: services/fabeo-service/Dockerfile
+    container_name: machs-fabeo-service
     restart: unless-stopped
     environment:
-      - PORT=8000
-      - DEBUG=true
       - LOG_LEVEL=INFO
-      - FABEO_PATH=/app/submodules/FABEO
-      - STORAGE_PATH=/app/storage
-    volumes:
-      # Mount FABEO submodule
-      - ../submodules/FABEO:/app/submodules/FABEO:ro
-      # Mount cryptography source for development
-      - ../cryptography:/app
-      # Mount storage for encrypted patient data
-      - ../storage:/app/storage
     ports:
-      - "8000:8000"
+      - "8002:8002"
     networks:
       - machs-network
-    depends_on:
-      - postgres
     healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8002/health')"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 60s
 
-  # EHR System (Node.js Express + PostgreSQL)
-  ehr-system:
+  # Modern Crypto API Gateway (Python 3.8+ + FastAPI)
+  crypto-api:
     build:
-      context: ../ehr-system
-      dockerfile: ../docker/Dockerfile.ehr
-    container_name: machs-ehr-system
+      context: ../services/crypto-api
+      dockerfile: Dockerfile
+    container_name: machs-crypto-api
     restart: unless-stopped
     environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-secure_password}@postgres:5432/${POSTGRES_DB:-machs_ehr}
-      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
-      - JWT_EXPIRES_IN=24h
-      - CRYPTO_SERVICE_URL=http://cryptography:8000
-      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:8080,http://frontend:8080
+      - LOG_LEVEL=INFO
+      - FABEO_SERVICE_URL=http://fabeo-service:8002
       - STORAGE_PATH=/app/storage
     volumes:
-      # Mount EHR source for development
-      - ../ehr-system:/app
-      - /app/node_modules
-      # Mount storage for encrypted patient data
       - ../storage:/app/storage
     ports:
-      - "3001:3000"
+      - "8001:8001"
     networks:
       - machs-network
     depends_on:
-      - postgres
-      - cryptography
+      - fabeo-service
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8001/health')"]
       interval: 30s
       timeout: 10s
       retries: 3
-
-  # Frontend (Node.js Express + Static Files) - Original Test Interface
-  # Commented out to reduce port confusion - Hospital Frontend on port 3002 is the main interface
-  # Uncomment if you need the original test interface
-  # frontend:
-  #   build:
-  #     context: ../frontend
-  #     dockerfile: Dockerfile
-  #   container_name: machs-frontend
-  #   restart: unless-stopped
-  #   environment:
-  #     - NODE_ENV=production
-  #     - PORT=8080
-  #     - EHR_SERVICE_URL=http://ehr-system:3000
-  #     - CRYPTO_SERVICE_URL=http://cryptography:8000
-  #   volumes:
-  #     # Mount frontend source for development
-  #     - ../frontend:/app
-  #     - /app/node_modules
-  #   ports:
-  #     - "8080:8080"
-  #   networks:
-  #     - machs-network
-  #   depends_on:
-  #     - ehr-system
-  #     - cryptography
-  #   healthcheck:
-  #     test: ["CMD", "node", "-e", "require('http').get('http://localhost:8080/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-
-  # Hospital Frontend (Enhanced Hospital System Interface)
-  hospital-frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile.hospital
-    container_name: machs-hospital-frontend
-    restart: unless-stopped
-    environment:
-      - NODE_ENV=production
-      - PORT=3002
-      - EHR_SERVICE_URL=http://ehr-system:3000
-      - CRYPTO_SERVICE_URL=http://cryptography:8000
-      - CREATE_DEMO_DATA=true
-    volumes:
-      # Mount frontend source for development
-      - ../frontend:/app
-      - /app/node_modules
-    ports:
-      - "3002:3002"
-    networks:
-      - machs-network
-    depends_on:
-      - ehr-system
-      - cryptography
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3002/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-
-volumes:
-  postgres_data:
-    driver: local
+      start_period: 30s
 
 networks:
   machs-network:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
