@@ -339,6 +339,12 @@ def decrypt():
         
         logger.info("Decrypting with attributes: %s", attributes)
         
+        # IMPORTANT: Charm's policy parser converts all attributes to UPPERCASE
+        # So we need to uppercase attributes here too for consistency
+        attributes_upper = [str(attr).upper() for attr in attributes]
+        
+        logger.info("Uppercased attributes for Charm compatibility: %s", attributes_upper)
+        
         # Deserialize ciphertext
         ciphertext = deserialize_charm_object(ciphertext_str)
         if ciphertext is None:
@@ -353,8 +359,8 @@ def decrypt():
                 policy_str = str(policy_val)
                 ciphertext['policy'] = cp_abe_scheme.util.createPolicy(policy_str)
         
-        # Generate key for attributes
-        key = cp_abe_scheme.keygen(pk, msk, attributes)
+        # Generate key for uppercased attributes
+        key = cp_abe_scheme.keygen(pk, msk, attributes_upper)
         
         # Perform decryption to get the GT element
         gt_element = cp_abe_scheme.decrypt(pk, ciphertext, key)
@@ -417,6 +423,12 @@ def decrypt_with_key():
                 logger.info("Policy is string type (%s), recreating policy tree...", policy_type_name)
                 policy_str = str(policy_val)
                 ciphertext['policy'] = cp_abe_scheme.util.createPolicy(policy_str)
+        
+        # Debug: Log key attributes and ciphertext attributes
+        if 'attr_list' in key:
+            logger.info("User key attributes: %s", key['attr_list'])
+        if 'ct' in ciphertext:
+            logger.info("Ciphertext policy attributes: %s", ciphertext['ct'].keys())
         
         # Perform decryption to get the GT element
         gt_element = cp_abe_scheme.decrypt(pk, ciphertext, key)
@@ -484,8 +496,15 @@ def generate_key():
         
         logger.info("Generating key for attributes: %s", attributes)
         
-        # Generate key
-        key = cp_abe_scheme.keygen(pk, msk, attributes)
+        # IMPORTANT: Charm's policy parser converts all attributes to UPPERCASE
+        # So we need to uppercase attributes here too for consistency
+        # This enables semantic attributes like 'doctor', 'nurse' to work
+        attributes_upper = [str(attr).upper() for attr in attributes]
+        
+        logger.info("Uppercased attributes for Charm compatibility: %s", attributes_upper)
+        
+        # Generate key with uppercased attributes
+        key = cp_abe_scheme.keygen(pk, msk, attributes_upper)
         
         # Serialize key for transport
         serialized_key = serialize_charm_object(key)
