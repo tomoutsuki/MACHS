@@ -1,0 +1,50 @@
+﻿services:
+  # FABEO Microservice (Python 2.7 + Charm + Ubuntu 16.04)
+  fabeo-service:
+    build:
+      context: ..
+      dockerfile: services/fabeo-service/Dockerfile
+    container_name: machs-fabeo-service
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=INFO
+    ports:
+      - "8002:8002"
+    networks:
+      - machs-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8002/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Modern Crypto API Gateway (Python 3.8+ + FastAPI)
+  crypto-api:
+    build:
+      context: ../services/crypto-api
+      dockerfile: Dockerfile
+    container_name: machs-crypto-api
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=INFO
+      - FABEO_SERVICE_URL=http://fabeo-service:8002
+      - STORAGE_PATH=/app/storage
+    volumes:
+      - ../storage:/app/storage
+    ports:
+      - "8001:8001"
+    networks:
+      - machs-network
+    depends_on:
+      - fabeo-service
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8001/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  machs-network:
+    driver: bridge
