@@ -28,15 +28,16 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install GMP 5.x
-RUN wget https://ftp.gnu.org/gnu/gmp/gmp-5.1.3.tar.gz && \
-    tar -xf gmp-5.1.3.tar.gz && \
+# Install GMP 5.x (using mirror due to ftp.gnu.org connectivity issues)
+RUN wget --timeout=30 --tries=3 https://gmplib.org/download/gmp/gmp-5.1.3.tar.bz2 || \
+    wget --timeout=30 --tries=3 http://mirrors.kernel.org/gnu/gmp/gmp-5.1.3.tar.bz2 && \
+    tar -xf gmp-5.1.3.tar.bz2 && \
     cd gmp-5.1.3 && \
     ./configure && make && make install && \
     cd .. && rm -rf gmp-5.1.3*
 
 # Install PBC 0.5.14
-RUN wget https://crypto.stanford.edu/pbc/files/pbc-0.5.14.tar.gz && \
+RUN wget --timeout=30 --tries=3 https://crypto.stanford.edu/pbc/files/pbc-0.5.14.tar.gz && \
     tar -xf pbc-0.5.14.tar.gz && \
     cd pbc-0.5.14 && \
     ./configure && make && make install && \
