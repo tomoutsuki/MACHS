@@ -218,3 +218,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.bak
+
+# Temporary docs
+tmp_docs/*
+!tmp_docs/.gitkeep

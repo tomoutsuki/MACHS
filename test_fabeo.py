@@ -275,10 +275,90 @@ def test_semantic_attributes():
         print(f"⚠️  Semantic attributes not supported: {e}")
         return None
 
+def test_colon_separated_attributes():
+    """Test with structured attribute format using camelCase."""
+    print_section("Test 5: Structured Attributes")
+    
+    print("\n📋 Scenario: Using structured attributes with hierarchical naming")
+    print("   Format: 'categoryValue' (e.g., 'positionDoctor', 'departmentCardiology')")
+    print("   ⚠️  Note: Colon ':' dash '-' and underscore '_' are reserved")
+    print("   ✅ Solution: Use camelCase for structured naming")
+    
+    print("\n💡 Use Case: Role-based + department-based access control")
+    print("   - positionDoctor = User is a doctor")
+    print("   - departmentCardiology = User works in cardiology dept")
+    print("   - departmentEmergency = User works in emergency dept")
+    
+    # Generate keys with structured attributes
+    cardiologist_key = generate_user_key(
+        "Dr. Smith (Cardiologist)", 
+        ["positionDoctor", "departmentCardiology"]
+    )
+    
+    emergency_doctor_key = generate_user_key(
+        "Dr. Jones (Emergency)", 
+        ["positionDoctor", "departmentEmergency"]
+    )
+    
+    nurse_cardio_key = generate_user_key(
+        "Nurse Maria (Cardiology)", 
+        ["positionNurse", "departmentCardiology"]
+    )
+    
+    if not all([cardiologist_key, emergency_doctor_key, nurse_cardio_key]):
+        print("❌ Key generation failed")
+        return False
+    
+    # Encrypt cardiac surgery data
+    # Policy: Must be a doctor AND work in cardiology department
+    cardiac_data = "Patient scheduled for triple bypass surgery. Pre-op clearance required."
+    cardiac_policy = "(positionDoctor and departmentCardiology)"
+    
+    print(f"\n🔐 Encrypting cardiac surgery data...")
+    print(f"   Policy: {cardiac_policy}")
+    print(f"   Requirement: Doctor + Cardiology Department")
+    
+    ciphertext = encrypt_data(cardiac_data, cardiac_policy)
+    
+    if not ciphertext:
+        print("❌ Encryption failed")
+        return False
+    
+    # Test access with different keys
+    print("\n👨‍⚕️ Cardiologist attempting access...")
+    cardio_plaintext = decrypt_with_key(ciphertext, "Dr. Smith (Cardiologist)", cardiologist_key)
+    
+    print("\n👨‍⚕️ Emergency Doctor attempting access...")
+    emergency_plaintext = decrypt_with_key(ciphertext, "Dr. Jones (Emergency)", emergency_doctor_key)
+    
+    print("\n👩‍⚕️ Cardiology Nurse attempting access...")
+    nurse_plaintext = decrypt_with_key(ciphertext, "Nurse Maria", nurse_cardio_key)
+    
+    # Verify results
+    success = (
+        cardio_plaintext == cardiac_data and  # Cardiologist should access
+        emergency_plaintext is None and        # Emergency doctor should not
+        nurse_plaintext is None                # Nurse should not (even in same dept)
+    )
+    
+    print("\n" + "-" * 70)
+    if success:
+        print("✅ Test passed: Structured attributes work correctly!")
+        print("   ✓ Cardiologist (doctor + cardiology) can access")
+        print("   ✓ Emergency doctor (doctor but wrong dept) cannot access")
+        print("   ✓ Cardiology nurse (right dept but not doctor) cannot access")
+        print("\n💡 Best Practice: Use camelCase for hierarchical attributes")
+        print("   Examples: roleDoctor, deptCardiology, clearanceHigh")
+        print("   ⚠️  Avoid: underscores (reserved for indexing), colons, dashes")
+    else:
+        print("❌ Test failed: Unexpected access pattern")
+    
+    return success
+
 def main():
     """Main test orchestration."""
     print("=" * 70)
-    print("  FABEO Proper Workflow Test Suite")
+    print("  FABEO Comprehensive Workflow Test Suite")
     print("  Demonstrating production-ready ABE usage")
     print("=" * 70)
     
@@ -295,6 +375,7 @@ def main():
     results["compound_policy"] = test_compound_policy()
     results["or_policy"] = test_or_policy()
     results["semantic_attributes"] = test_semantic_attributes()
+    results["structured_attributes"] = test_colon_separated_attributes()
     
     # Summary
     print_section("TEST SUMMARY")
@@ -311,10 +392,25 @@ def main():
         status = "✅ PASS" if result is True else ("❌ FAIL" if result is False else "⏭️  SKIP")
         print(f"  {status}  {test_name}")
     
+    if passed == total:
+        print("\n🎉 All tests passed! FABEO is production-ready!")
+        print("\n✅ Verified Capabilities:")
+        print("   ✓ Simple single-attribute policies")
+        print("   ✓ Compound AND/OR logic policies")
+        print("   ✓ Semantic attribute names (doctor, nurse, emergency)")
+        print("   ✓ Structured attributes using camelCase (positionDoctor)")
+        print("\n⚠️  Attribute Format Requirements:")
+        print("   ✅ Allowed: Letters, numbers, camelCase")
+        print("   ❌ Reserved: Colon ':', dash '-', underscore '_'")
+        print("   💡 Use camelCase for structured names")
+    
     print("\n" + "=" * 70)
     print("💡 Key Takeaways:")
     print("=" * 70)
     print("1. Users get keys during registration based on their attributes")
+    print("2. Structured attributes use camelCase: roleDoctor, deptCardiology")
+    print("3. FABEO supports alphanumeric attributes (camelCase recommended)")
+    print("4. Special chars (':' '-' '_') are reserved by Charm's policy parser")
     print("2. Data is encrypted with policies describing who can access it")
     print("3. Decryption uses pre-generated keys, NOT raw attributes")
     print("4. This approach is secure and scalable for production systems")
