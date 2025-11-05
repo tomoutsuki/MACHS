@@ -83,7 +83,7 @@ def check_docker_services():
         # Verifica os serviços FABEO ativos
         services = {
             "machs-fabeo-service": False,
-            "machs-crypto-api": False
+            "machs-microservice-api": False
         }
 
         for line in result.stdout.split('\n'):

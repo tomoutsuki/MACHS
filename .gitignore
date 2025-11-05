@@ -222,3 +222,4 @@ Thumbs.db
 # Temporary docs
 tmp_docs/*
 !tmp_docs/.gitkeep
+tmp.sh

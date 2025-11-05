@@ -1,0 +1,57 @@
+[
+	{
+		"display_name": "Ana dos Santos",
+		"role": "Médica Cardiologista",
+		"sector": "Pronto Atendimento"
+	},
+	{
+		"display_name": "Bruno de Sousa",
+		"role": "Enfermeiro de Triagem",
+		"sector": "Pronto Atendimento"
+	},
+	{
+		"display_name": "Carlos Mendes",
+		"role": "Médico Clínico Geral",
+		"sector": "Internação"
+	},
+	{
+		"display_name": "Dalva Ferreira",
+		"role": "Enfermeira Chefe",
+		"sector": "Internação"
+	},
+	{
+		"display_name": "Eduarda Lima",
+		"role": "Técnica de Enfermagem",
+		"sector": "Internação"
+	},
+	{
+		"display_name": "Fernanda Rocha",
+		"role": "Médica Intensivista",
+		"sector": "UTI"
+	},
+	{
+		"display_name": "Gabriela Alves",
+		"role": "Biomédica",
+		"sector": "Laboratório"
+	},
+	{
+		"display_name": "Hallan Silva",
+		"role": "Médico Radiologista",
+		"sector": "Radiologia"
+	},
+	{
+		"display_name": "Isabela Costa",
+		"role": "Farmacêutica",
+		"sector": "Farmácia Central"
+	},
+	{
+		"display_name": "João Pedro Martins",
+		"role": "Diretor Administrativo",
+		"sector": "Finanças"
+	},
+	{
+		"display_name": "Karina Souza",
+		"role": "Atendente",
+		"sector": "Recepção"
+	}
+]
