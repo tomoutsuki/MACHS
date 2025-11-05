@@ -1,4 +1,28 @@
 ﻿services:
+  # PostgreSQL Database
+  database:
+    image: postgres:16-alpine
+    container_name: machs-database
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=machs_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=machs_secure_password_2025
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
+    volumes:
+      - ../services/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - machs-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d machs_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   # FABEO Microservice (Python 2.7 + Charm + Ubuntu 16.04)
   fabeo-service:
     build:
@@ -24,12 +48,13 @@
     build:
       context: ../services/crypto-api
       dockerfile: Dockerfile
-    container_name: machs-crypto-api
+    container_name: machs-microservice-api
     restart: unless-stopped
     environment:
       - LOG_LEVEL=INFO
       - FABEO_SERVICE_URL=http://fabeo-service:8002
       - STORAGE_PATH=/app/storage
+      - DATABASE_URL=postgresql+asyncpg://postgres:machs_secure_password_2025@database:5432/machs_db
     volumes:
       - ../storage:/app/storage
     ports:
@@ -38,6 +63,7 @@
       - machs-network
     depends_on:
       - fabeo-service
+      - database
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8001/health')"]
       interval: 30s
@@ -48,3 +74,7 @@
 networks:
   machs-network:
     driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

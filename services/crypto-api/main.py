@@ -11,6 +11,8 @@ import os
 from fabeo_client import FABEOClient
 from standard_crypto import StandardCrypto
 from models import *
+from database import init_db, close_db
+from database_routes import router as db_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -35,17 +37,33 @@ fabeo_service_url = os.getenv("FABEO_SERVICE_URL", "http://fabeo-service:8002")
 fabeo_client = FABEOClient(fabeo_service_url)
 standard_crypto = StandardCrypto()
 
+# Include database router
+app.include_router(db_router)
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize connections to services."""
     logger.info("Starting Crypto API Gateway...")
     logger.info(f"FABEO service URL: {fabeo_service_url}")
     
+    # Initialize database connection
+    db_status = await init_db()
+    if db_status:
+        logger.info("Database connection established")
+    else:
+        logger.warning("Database connection failed - database operations will not work")
+    
     # Test FABEO service connection
     if await fabeo_client.health_check():
         logger.info("FABEO service connection established")
     else:
         logger.warning("FABEO service not available - ABE operations will fail")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup on shutdown."""
+    await close_db()
+    logger.info("Crypto API Gateway shutting down...")
 
 @app.get("/health", response_model=HealthResponse)
 async def health_check():

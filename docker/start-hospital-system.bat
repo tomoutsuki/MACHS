@@ -34,17 +34,17 @@ echo ============================================
 echo   FABEO System Started!
 echo ============================================
 echo.
-echo 🔐 Crypto API Health: http://localhost:8001/health
-echo � FABEO Service Health: http://localhost:8002/health
+echo Crypto API Health: http://localhost:8001/health
+echo FABEO Service Health: http://localhost:8002/health
 echo.
-echo 📋 Services Status:
+echo Services Status:
 docker-compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
 echo.
-echo 🧪 Run tests with:
+echo Run tests with:
 echo    python test_fabeo_isolated.py
 echo    python test_fabeo_proper_workflow.py
 echo.
-echo ⚠️  To stop all services: docker-compose down
-echo 🔧 To view logs: docker-compose logs -f
+echo [WARN]  To stop all services: docker-compose down
+echo To view logs: docker-compose logs -f
 echo.
 pause
