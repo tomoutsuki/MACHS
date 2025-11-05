@@ -4,7 +4,7 @@ Pydantic schemas for database operations.
 
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
-from datetime import date
+from datetime import date, datetime
 from uuid import UUID
 
 # User schemas
@@ -18,7 +18,7 @@ class UserCreate(UserBase):
 
 class UserResponse(UserBase):
     id: UUID
-    created_at: date
+    created_at: datetime
     is_active: bool
     
     model_config = ConfigDict(from_attributes=True)

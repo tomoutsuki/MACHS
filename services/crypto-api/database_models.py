@@ -2,10 +2,10 @@
 Database models for MACHS system using SQLAlchemy.
 """
 
-from sqlalchemy import Column, String, Boolean, Date, Text, ForeignKey, CheckConstraint
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, String, Boolean, Date, DateTime, Text, ForeignKey, CheckConstraint
+from sqlalchemy.dialects.postgresql import UUID, TIMESTAMP
 from sqlalchemy.orm import relationship, declarative_base
-from datetime import date
+from datetime import date, datetime
 import uuid
 
 Base = declarative_base()
@@ -18,7 +18,7 @@ class User(Base):
     display_name = Column(String(255), nullable=False)
     role = Column(String(255), nullable=True)
     sector = Column(String(255), nullable=True)
-    created_at = Column(Date, nullable=False, default=date.today)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow)
     is_active = Column(Boolean, default=True, nullable=False)
     
     # Relationships

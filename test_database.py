@@ -297,6 +297,40 @@ def test_soft_delete_patient(patient_id):
         print(f"[ERROR] Failed: {response.text}")
         return False
 
+def cleanup_test_users(user_ids):
+    """Clean up test users created during testing using direct database deletion."""
+    print_section("Test: Cleanup Test Users")
+    
+    if not user_ids:
+        print("[INFO] No test users to clean up")
+        return True
+    
+    import subprocess
+    
+    deleted_count = 0
+    for user_id in user_ids:
+        try:
+            # Use docker exec to delete the user directly from the database
+            sql_command = f"DELETE FROM users WHERE id = '{user_id}';"
+            command = [
+                "docker", "exec", "-i", "machs-database",
+                "psql", "-U", "postgres", "-d", "machs_db",
+                "-c", sql_command
+            ]
+            
+            result = subprocess.run(command, capture_output=True, text=True)
+            
+            if result.returncode == 0 and "DELETE" in result.stdout:
+                print(f"[OK] Deleted test user: {user_id}")
+                deleted_count += 1
+            else:
+                print(f"[WARN] Failed to delete user {user_id}: {result.stderr}")
+        except Exception as e:
+            print(f"[WARN] Exception deleting user {user_id}: {e}")
+    
+    print(f"[OK] Successfully deleted {deleted_count}/{len(user_ids)} test users")
+    return deleted_count == len(user_ids)
+
 def main():
     """Run all database tests."""
     print("=" * 70)
@@ -359,6 +393,10 @@ def main():
         # Test 12: Soft delete patient
         test_soft_delete_patient(patient2['id'] if patient2 else patient1['id'])
         
+        # Cleanup: Delete test users from database
+        test_user_ids = [user['id'] for user in users]
+        cleanup_success = cleanup_test_users(test_user_ids)
+        
         print_section("SUMMARY")
         print("[OK] All database tests completed successfully!")
         print("\nDatabase functionality verified:")
@@ -370,6 +408,7 @@ def main():
         print("  [OK] Record updates")
         print("  [OK] Soft deletion")
         print("  [OK] Data validation")
+        print("  [OK] Test cleanup (auto-deleted test users)" if cleanup_success else "  [WARN] Test cleanup (manual deletion may be needed)")
         
     except Exception as e:
         print(f"\n[FAIL] Test failed with exception: {e}")
