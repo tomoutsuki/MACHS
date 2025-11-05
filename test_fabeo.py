@@ -38,10 +38,10 @@ def generate_user_key(user_id, attributes):
     
     if response.status_code == 200:
         result = response.json()
-        print(f"✅ Key generated successfully for {user_id}")
+        print(f"[PASS] Key generated successfully for {user_id}")
         return result.get("key")
     else:
-        print(f"❌ Key generation failed: {response.text}")
+        print(f"[FAIL] Key generation failed: {response.text}")
         return None
 
 def encrypt_data(data, policy):
@@ -64,10 +64,10 @@ def encrypt_data(data, policy):
     
     if response.status_code == 200:
         result = response.json()
-        print("✅ Encryption successful")
+        print("[PASS] Encryption successful")
         return result.get("ciphertext")
     else:
-        print(f"❌ Encryption failed: {response.text}")
+        print(f"[FAIL] Encryption failed: {response.text}")
         return None
 
 def decrypt_with_key(ciphertext, user_id, user_key):
@@ -90,12 +90,12 @@ def decrypt_with_key(ciphertext, user_id, user_key):
     if response.status_code == 200:
         result = response.json()
         plaintext = result.get("plaintext")
-        print(f"✅ Decryption successful for {user_id}")
+        print(f"[PASS] Decryption successful for {user_id}")
         print(f"   Decrypted: {plaintext}")
         return plaintext
     else:
         error = response.json().get("detail", "Unknown error")
-        print(f"❌ Decryption failed for {user_id}: {error}")
+        print(f"[FAIL] Decryption failed for {user_id}: {error}")
         return None
 
 def test_simple_policy():
@@ -110,7 +110,7 @@ def test_simple_policy():
     nurse_key = generate_user_key("Nurse Jane", ["2"])  # Has nurse attribute
     
     if not doctor_key or not nurse_key:
-        print("❌ Key generation failed")
+        print("[FAIL] Key generation failed")
         return False
     
     # Encrypt medical record
@@ -118,7 +118,7 @@ def test_simple_policy():
     ciphertext = encrypt_data(medical_record, "1")
     
     if not ciphertext:
-        print("❌ Encryption failed")
+        print("[FAIL] Encryption failed")
         return False
     
     # Try to decrypt with doctor key (should succeed)
@@ -134,9 +134,9 @@ def test_simple_policy():
     
     print("\n" + "-" * 70)
     if success:
-        print("✅ Test passed: Doctor can access, Nurse cannot")
+        print("[PASS] Test passed: Doctor can access, Nurse cannot")
     else:
-        print("❌ Test failed: Unexpected access pattern")
+        print("[FAIL] Test failed: Unexpected access pattern")
     
     return success
 
@@ -153,7 +153,7 @@ def test_compound_policy():
     admin_key = generate_user_key("Admin", ["4"])  # Admin only
     
     if not doctor_key or not cardiologist_key or not admin_key:
-        print("❌ Key generation failed")
+        print("[FAIL] Key generation failed")
         return False
     
     # Encrypt sensitive cardiac record
@@ -161,7 +161,7 @@ def test_compound_policy():
     ciphertext = encrypt_data(cardiac_record, "(1 and 3)")
     
     if not ciphertext:
-        print("❌ Encryption failed")
+        print("[FAIL] Encryption failed")
         return False
     
     # Try decryption with different keys
@@ -183,9 +183,9 @@ def test_compound_policy():
     
     print("\n" + "-" * 70)
     if success:
-        print("✅ Test passed: Only cardiologist can access")
+        print("[PASS] Test passed: Only cardiologist can access")
     else:
-        print("❌ Test failed: Unexpected access pattern")
+        print("[FAIL] Test failed: Unexpected access pattern")
     
     return success
 
@@ -202,7 +202,7 @@ def test_or_policy():
     admin_key = generate_user_key("Admin", ["4"])
     
     if not doctor_key or not nurse_key or not admin_key:
-        print("❌ Key generation failed")
+        print("[FAIL] Key generation failed")
         return False
     
     # Encrypt emergency contact
@@ -210,7 +210,7 @@ def test_or_policy():
     ciphertext = encrypt_data(emergency_contact, "(1 or 2)")
     
     if not ciphertext:
-        print("❌ Encryption failed")
+        print("[FAIL] Encryption failed")
         return False
     
     # Try decryption with different keys
@@ -232,9 +232,9 @@ def test_or_policy():
     
     print("\n" + "-" * 70)
     if success:
-        print("✅ Test passed: Both doctor and nurse can access, admin cannot")
+        print("[PASS] Test passed: Both doctor and nurse can access, admin cannot")
     else:
-        print("❌ Test failed: Unexpected access pattern")
+        print("[FAIL] Test failed: Unexpected access pattern")
     
     return success
 
@@ -250,7 +250,7 @@ def test_semantic_attributes():
         doctor_key = generate_user_key("Dr. Semantic", ["doctor", "emergency"])
         
         if not doctor_key:
-            print("⚠️  Semantic attributes not supported - use numeric attributes (1, 2, 3...)")
+            print("[WARN]  Semantic attributes not supported - use numeric attributes (1, 2, 3...)")
             return None
         
         # Try encryption
@@ -258,21 +258,21 @@ def test_semantic_attributes():
         ciphertext = encrypt_data(data, "(doctor and emergency)")
         
         if not ciphertext:
-            print("⚠️  Semantic policies not supported - use numeric format")
+            print("[WARN]  Semantic policies not supported - use numeric format")
             return None
         
         # Try decryption
         plaintext = decrypt_with_key(ciphertext, "Dr. Semantic", doctor_key)
         
         if plaintext == data:
-            print("✅ Semantic attributes WORK! This is great news!")
+            print("[PASS] Semantic attributes WORK! This is great news!")
             return True
         else:
-            print("⚠️  Semantic attributes partially supported but decryption failed")
+            print("[WARN]  Semantic attributes partially supported but decryption failed")
             return False
             
     except Exception as e:
-        print(f"⚠️  Semantic attributes not supported: {e}")
+        print(f"[WARN]  Semantic attributes not supported: {e}")
         return None
 
 def test_colon_separated_attributes():
@@ -281,8 +281,8 @@ def test_colon_separated_attributes():
     
     print("\n📋 Scenario: Using structured attributes with hierarchical naming")
     print("   Format: 'categoryValue' (e.g., 'positionDoctor', 'departmentCardiology')")
-    print("   ⚠️  Note: Colon ':' dash '-' and underscore '_' are reserved")
-    print("   ✅ Solution: Use camelCase for structured naming")
+    print("   [WARN]  Note: Colon ':' dash '-' and underscore '_' are reserved")
+    print("   [PASS] Solution: Use camelCase for structured naming")
     
     print("\n💡 Use Case: Role-based + department-based access control")
     print("   - positionDoctor = User is a doctor")
@@ -306,7 +306,7 @@ def test_colon_separated_attributes():
     )
     
     if not all([cardiologist_key, emergency_doctor_key, nurse_cardio_key]):
-        print("❌ Key generation failed")
+        print("[FAIL] Key generation failed")
         return False
     
     # Encrypt cardiac surgery data
@@ -321,7 +321,7 @@ def test_colon_separated_attributes():
     ciphertext = encrypt_data(cardiac_data, cardiac_policy)
     
     if not ciphertext:
-        print("❌ Encryption failed")
+        print("[FAIL] Encryption failed")
         return False
     
     # Test access with different keys
@@ -343,15 +343,15 @@ def test_colon_separated_attributes():
     
     print("\n" + "-" * 70)
     if success:
-        print("✅ Test passed: Structured attributes work correctly!")
-        print("   ✓ Cardiologist (doctor + cardiology) can access")
-        print("   ✓ Emergency doctor (doctor but wrong dept) cannot access")
-        print("   ✓ Cardiology nurse (right dept but not doctor) cannot access")
+        print("[PASS] Test passed: Structured attributes work correctly!")
+        print("   [OK] Cardiologist (doctor + cardiology) can access")
+        print("   [OK] Emergency doctor (doctor but wrong dept) cannot access")
+        print("   [OK] Cardiology nurse (right dept but not doctor) cannot access")
         print("\n💡 Best Practice: Use camelCase for hierarchical attributes")
         print("   Examples: roleDoctor, deptCardiology, clearanceHigh")
-        print("   ⚠️  Avoid: underscores (reserved for indexing), colons, dashes")
+        print("   [WARN]  Avoid: underscores (reserved for indexing), colons, dashes")
     else:
-        print("❌ Test failed: Unexpected access pattern")
+        print("[FAIL] Test failed: Unexpected access pattern")
     
     return success
 
@@ -365,7 +365,7 @@ def main():
     print("\n🏥 Healthcare Access Control Scenarios")
     print("=" * 70)
     
-    print("\n⏳ Waiting for services to be ready...")
+    print("\n[WAIT] Waiting for services to be ready...")
     time.sleep(2)
     
     # Run tests
@@ -389,19 +389,19 @@ def main():
     print("\nDetailed results:")
     
     for test_name, result in results.items():
-        status = "✅ PASS" if result is True else ("❌ FAIL" if result is False else "⏭️  SKIP")
+        status = "[PASS] PASS" if result is True else ("[FAIL] FAIL" if result is False else "[SKIP]  SKIP")
         print(f"  {status}  {test_name}")
     
     if passed == total:
         print("\n🎉 All tests passed! FABEO is production-ready!")
-        print("\n✅ Verified Capabilities:")
-        print("   ✓ Simple single-attribute policies")
-        print("   ✓ Compound AND/OR logic policies")
-        print("   ✓ Semantic attribute names (doctor, nurse, emergency)")
-        print("   ✓ Structured attributes using camelCase (positionDoctor)")
-        print("\n⚠️  Attribute Format Requirements:")
-        print("   ✅ Allowed: Letters, numbers, camelCase")
-        print("   ❌ Reserved: Colon ':', dash '-', underscore '_'")
+        print("\n[PASS] Verified Capabilities:")
+        print("   [OK] Simple single-attribute policies")
+        print("   [OK] Compound AND/OR logic policies")
+        print("   [OK] Semantic attribute names (doctor, nurse, emergency)")
+        print("   [OK] Structured attributes using camelCase (positionDoctor)")
+        print("\n[WARN]  Attribute Format Requirements:")
+        print("   [PASS] Allowed: Letters, numbers, camelCase")
+        print("   [FAIL] Reserved: Colon ':', dash '-', underscore '_'")
         print("   💡 Use camelCase for structured names")
     
     print("\n" + "=" * 70)
@@ -429,10 +429,10 @@ def main():
         print("🎉 All tests passed! FABEO is production-ready!")
         return 0
     elif passed > 0:
-        print("⚠️  Some tests passed, but there are issues to address")
+        print("[WARN]  Some tests passed, but there are issues to address")
         return 1
     else:
-        print("❌ Tests failed - please check the system")
+        print("[FAIL] Tests failed - please check the system")
         return 1
 
 if __name__ == "__main__":

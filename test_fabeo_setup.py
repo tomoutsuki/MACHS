@@ -29,9 +29,17 @@ def print_status(message: str, ok: bool | None = None):
         tag = "[INFO]"
     print(f"{tag} {message}")
 
+def print_divider():
+    print("" + "-"*70 + "")
+
+def print_strong(message:str):
+    print_divider()
+    print(message)
+    
+
 def check_fabeo_submodule():
     # Verifica se o submódulo FABEO está presente
-    print_status("\n\n[PROCESSO 1] Verificando submódulo FABEO...")
+    print_strong("[PROCESSO 1] Verificando submódulo FABEO...")
 
     fabeo_path = Path("submodules/FABEO")
 
@@ -63,7 +71,7 @@ def check_fabeo_submodule():
 
 def check_docker_services():
     # Verifica se os serviços Docker estão em execução
-    print_status("\n\n[PROCESSO 2] Verificando serviços Docker...")
+    print_strong("[PROCESSO 2] Verificando serviços Docker...")
 
     try:
         # Verifica se o Docker está rodando
@@ -108,7 +116,7 @@ def check_docker_services():
 
 def check_service_health():
     # Verifica o estado (health) dos serviços via API
-    print_status("\n\n[PROCESSO 3] Verificando integridade (health) dos serviços...")
+    print_strong("[PROCESSO 3] Verificando integridade (health) dos serviços...")
 
     try:
         import requests
@@ -152,7 +160,7 @@ def check_service_health():
 
 def check_docker_files():
     """Verifica se os arquivos necessários do Docker existem"""
-    print_status("\n\n[PROCESSO 4] Verificando arquivos de configuração do Docker...")
+    print_strong("[PROCESSO 4] Verificando arquivos de configuração do Docker...")
 
     required_files = {
         "docker/docker-compose.yml": "Configuração do Docker Compose",
@@ -177,7 +185,7 @@ def check_docker_files():
 
 def check_storage_structure():
     """Verifica a estrutura de armazenamento (storage)"""
-    print_status("\n\n[PROCESSO 5] Verificando estrutura de armazenamento...")
+    print_strong("[PROCESSO 5] Verificando estrutura de armazenamento...")
 
     storage_dirs = [
         "storage/patients",
@@ -197,7 +205,7 @@ def check_storage_structure():
 
 def test_encryption_decryption():
     """Testa a funcionalidade de encriptação e decriptação via API"""
-    print_status("\n\n[PROCESSO 6] Testando funcionalidade de encriptação/decriptação...")
+    print_strong("[PROCESSO 6] Testando funcionalidade de encriptação/decriptação...")
 
     try:
         import requests
@@ -289,41 +297,41 @@ def test_encryption_decryption():
 
 def print_summary(results):
     """Imprime um resumo dos resultados"""
-    print_status("\n" + "="*70)
+    print_divider()
     print_status("RESUMO DA VERIFICAÇÃO")
-    print_status("="*70)
+    print_divider()
 
     total = len(results)
     passed = sum(1 for r in results.values() if r)
     failed = total - passed
 
     for test_name, success in results.items():
-        msg = f"{'✅ PASSOU' if success else '❌ FALHOU'}: {test_name}"
+        msg = f"{'[PASS] SUCESSO' if success else '[FAIL] ERRO'}: {test_name}"
         print_status(msg, success)
 
-    print_status("\n" + "-"*70)
+    print_divider()
     print_status(f"Total de testes: {total}")
-    print_status(f"Passaram: {passed}")
-    print_status(f"Falharam: {failed}")
+    print_status(f"Sucesso: {passed}")
+    print_status(f"Falha: {failed}")
     print_status(f"Taxa de sucesso: {(passed/total)*100:.1f}%")
-    print_status("="*70)
+    print_divider()
 
     if failed == 0:
-        print_status("\n🎉 TODOS OS TESTES FORAM BEM-SUCEDIDOS!")
-        print_status("✅ Sistema FABEO está totalmente funcional e pronto para uso!", True)
+        print_strong("TODOS OS TESTES FORAM BEM-SUCEDIDOS.")
+        print_strong("[PASS] Sistema FABEO está totalmente funcional e pronto para uso!")
     else:
-        print_error("\n⚠️  ALGUNS TESTES FALHARAM")
+        print_error("\n[WARN]  ALGUNS TESTES FALHARAM")
         print_status("Verifique os erros acima e corrija os problemas.")
         if not results.get("Serviços Docker"):
-            print_status("\n💡 Dica: Inicie os serviços com: cd docker && docker-compose up -d")
+            print_status("\n Dica: Inicie os serviços com: cd docker && docker-compose up -d")
 
     return failed == 0
 
 def test_fabeo_integration():
     """Função principal de verificação"""
-    print_status("="*70)
-    print_status("TESTE ISOLADO FABEO - SCRIPT DE VERIFICAÇÃO")
-    print_status("="*70)
+    print_divider()
+    print_status("SCRIPT DE VERIFICAÇÃO DE INSTALAÇÃO FABEO")
+    print_divider()
     print_status("Iniciando verificação de todos os componentes do sistema FABEO...\n")
 
     results = {}
@@ -338,7 +346,7 @@ def test_fabeo_integration():
         results["Integridade dos Serviços"] = check_service_health()
         results["Encriptação/Decriptação"] = test_encryption_decryption()
     else:
-        print_error("\n⚠️  Serviços Docker não estão em execução. Pulando testes de API.")
+        print_error("\n[WARN]  Serviços Docker não estão em execução. Pulando testes de API.")
         results["Integridade dos Serviços"] = False
         results["Encriptação/Decriptação"] = False
 
@@ -346,27 +354,30 @@ def test_fabeo_integration():
     success = print_summary(results)
 
     # Informações adicionais
-    print_status("\n" + "="*70)
+    print_divider()
     print_status("INFORMAÇÕES ADICIONAIS")
-    print_status("="*70)
-    print_status("\n📋 Arquitetura do Sistema:")
+    print_divider()
+    print_status("Arquitetura do Sistema:")
     print_status("  - FABEO Service: Python 2.7 + Charm-crypto 0.43 (Porta 8002)")
     print_status("  - Crypto API: Python 3.8+ + FastAPI (Porta 8001)")
     print_status("  - Rede Docker: machs-network (bridge)")
     print_status("  - Armazenamento: Baseado em arquivos (patients/, encounters/, conditions/)")
 
-    print_status("\n🔧 Comandos úteis:")
+    print_divider()
+    print_status("Comandos úteis:")
     print_status("  - Iniciar: cd docker && docker-compose up -d")
     print_status("  - Parar: cd docker && docker-compose down")
     print_status("  - Logs: cd docker && docker-compose logs -f")
     print_status("  - Status: cd docker && docker-compose ps")
 
-    print_status("\n🧪 Scripts de teste:")
+    print_divider()
+    print_status("Scripts de teste:")
     print_status("  - python test_fabeo_isolated.py")
     print_status("  - python test_fabeo_proper_workflow.py")
     print_status("  - python verify_fabeo_setup.py")
 
-    print_status("\n🌐 Endpoints da API:")
+    print_divider()
+    print_status("Endpoints da API:")
     print_status("  - Health: http://localhost:8001/health")
     print_status("  - Documentação: http://localhost:8001/docs")
     print_status("  - Encrypt: POST http://localhost:8001/encrypt")

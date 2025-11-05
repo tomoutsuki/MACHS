@@ -25,7 +25,7 @@ def test_database_health():
     
     assert response.status_code == 200
     assert response.json()["status"] == "healthy"
-    print("✓ Health check passed")
+    print("[OK] Health check passed")
     return True
 
 def test_create_users():
@@ -46,12 +46,12 @@ def test_create_users():
         if response.status_code == 201:
             user = response.json()
             created_users.append(user)
-            print(f"✓ User created: {user['id']}")
+            print(f"[OK] User created: {user['id']}")
             print(f"  Display Name: {user['display_name']}")
             print(f"  Created At: {user['created_at']}")
             print(f"  Active: {user['is_active']}")
         else:
-            print(f"✗ Failed: {response.text}")
+            print(f"[ERROR] Failed: {response.text}")
             return False
     
     return created_users
@@ -65,12 +65,12 @@ def test_list_users():
     
     if response.status_code == 200:
         users = response.json()
-        print(f"✓ Found {len(users)} users")
+        print(f"[OK] Found {len(users)} users")
         for user in users:
             print(f"  - {user['display_name']} ({user['id']})")
         return users
     else:
-        print(f"✗ Failed: {response.text}")
+        print(f"[ERROR] Failed: {response.text}")
         return []
 
 def test_create_patient(user_id, ciphertext):
@@ -87,13 +87,13 @@ def test_create_patient(user_id, ciphertext):
     
     if response.status_code == 201:
         patient = response.json()
-        print(f"✓ Patient created: {patient['id']}")
+        print(f"[OK] Patient created: {patient['id']}")
         print(f"  Created By: {patient['created_by']}")
         print(f"  Created Date: {patient['created_date']}")
         print(f"  Has Ciphertext: {patient['ciphertext'] is not None}")
         return patient
     else:
-        print(f"✗ Failed: {response.text}")
+        print(f"[ERROR] Failed: {response.text}")
         return None
 
 def test_create_patient_with_storage(user_id, storage_path):
@@ -110,11 +110,11 @@ def test_create_patient_with_storage(user_id, storage_path):
     
     if response.status_code == 201:
         patient = response.json()
-        print(f"✓ Patient created: {patient['id']}")
+        print(f"[OK] Patient created: {patient['id']}")
         print(f"  Storage Path: {patient['storage_path']}")
         return patient
     else:
-        print(f"✗ Failed: {response.text}")
+        print(f"[ERROR] Failed: {response.text}")
         return None
 
 def test_invalid_patient_creation(user_id):
@@ -132,10 +132,10 @@ def test_invalid_patient_creation(user_id):
     print(f"Status Code: {response.status_code}")
     
     if response.status_code == 400:
-        print(f"✓ Correctly rejected invalid data: {response.json()['detail']}")
+        print(f"[OK] Correctly rejected invalid data: {response.json()['detail']}")
         return True
     else:
-        print(f"✗ Should have failed with 400, got {response.status_code}")
+        print(f"[ERROR] Should have failed with 400, got {response.status_code}")
         return False
 
 def test_list_patients():
@@ -147,14 +147,14 @@ def test_list_patients():
     
     if response.status_code == 200:
         patients = response.json()
-        print(f"✓ Found {len(patients)} patients")
+        print(f"[OK] Found {len(patients)} patients")
         for patient in patients:
             print(f"  - Patient {patient['id']}")
             print(f"    Created: {patient['created_date']}")
             print(f"    Deleted: {patient['is_deleted']}")
         return patients
     else:
-        print(f"✗ Failed: {response.text}")
+        print(f"[ERROR] Failed: {response.text}")
         return []
 
 def test_get_patient(patient_id):
@@ -166,12 +166,12 @@ def test_get_patient(patient_id):
     
     if response.status_code == 200:
         patient = response.json()
-        print(f"✓ Retrieved patient: {patient['id']}")
+        print(f"[OK] Retrieved patient: {patient['id']}")
         print(f"  Created Date: {patient['created_date']}")
         print(f"  Is Deleted: {patient['is_deleted']}")
         return patient
     else:
-        print(f"✗ Failed: {response.text}")
+        print(f"[ERROR] Failed: {response.text}")
         return None
 
 def test_create_condition(patient_id, user_id, ciphertext):
@@ -189,12 +189,12 @@ def test_create_condition(patient_id, user_id, ciphertext):
     
     if response.status_code == 201:
         condition = response.json()
-        print(f"✓ Condition created: {condition['id']}")
+        print(f"[OK] Condition created: {condition['id']}")
         print(f"  Patient ID: {condition['patient_id']}")
         print(f"  Created Date: {condition['created_date']}")
         return condition
     else:
-        print(f"✗ Failed: {response.text}")
+        print(f"[ERROR] Failed: {response.text}")
         return None
 
 def test_list_conditions_for_patient(patient_id):
@@ -206,10 +206,10 @@ def test_list_conditions_for_patient(patient_id):
     
     if response.status_code == 200:
         conditions = response.json()
-        print(f"✓ Found {len(conditions)} conditions for patient {patient_id}")
+        print(f"[OK] Found {len(conditions)} conditions for patient {patient_id}")
         return conditions
     else:
-        print(f"✗ Failed: {response.text}")
+        print(f"[ERROR] Failed: {response.text}")
         return []
 
 def test_create_encounter(patient_id, user_id, ciphertext):
@@ -227,11 +227,11 @@ def test_create_encounter(patient_id, user_id, ciphertext):
     
     if response.status_code == 201:
         encounter = response.json()
-        print(f"✓ Encounter created: {encounter['id']}")
+        print(f"[OK] Encounter created: {encounter['id']}")
         print(f"  Patient ID: {encounter['patient_id']}")
         return encounter
     else:
-        print(f"✗ Failed: {response.text}")
+        print(f"[ERROR] Failed: {response.text}")
         return None
 
 def test_create_account(patient_id, user_id, storage_path):
@@ -249,11 +249,11 @@ def test_create_account(patient_id, user_id, storage_path):
     
     if response.status_code == 201:
         account = response.json()
-        print(f"✓ Account created: {account['id']}")
+        print(f"[OK] Account created: {account['id']}")
         print(f"  Storage Path: {account['storage_path']}")
         return account
     else:
-        print(f"✗ Failed: {response.text}")
+        print(f"[ERROR] Failed: {response.text}")
         return None
 
 def test_update_patient(patient_id, new_ciphertext):
@@ -269,11 +269,11 @@ def test_update_patient(patient_id, new_ciphertext):
     
     if response.status_code == 200:
         patient = response.json()
-        print(f"✓ Patient updated: {patient['id']}")
+        print(f"[OK] Patient updated: {patient['id']}")
         print(f"  Updated Date: {patient['updated_date']}")
         return patient
     else:
-        print(f"✗ Failed: {response.text}")
+        print(f"[ERROR] Failed: {response.text}")
         return None
 
 def test_soft_delete_patient(patient_id):
@@ -284,7 +284,7 @@ def test_soft_delete_patient(patient_id):
     print(f"Status Code: {response.status_code}")
     
     if response.status_code == 204:
-        print(f"✓ Patient soft deleted: {patient_id}")
+        print(f"[OK] Patient soft deleted: {patient_id}")
         
         # Verify it's marked as deleted
         get_response = requests.get(f"{BASE_URL}/db/patients/{patient_id}")
@@ -294,7 +294,7 @@ def test_soft_delete_patient(patient_id):
             return patient['is_deleted']
         return True
     else:
-        print(f"✗ Failed: {response.text}")
+        print(f"[ERROR] Failed: {response.text}")
         return False
 
 def main():
@@ -303,19 +303,19 @@ def main():
     print("  MACHS Database Integration Tests")
     print("=" * 70)
     
-    print("\n⏳ Waiting for services to be ready...")
+    print("\n[WAIT] Waiting for services to be ready...")
     time.sleep(3)
     
     try:
         # Test 1: Health check
         if not test_database_health():
-            print("\n❌ Health check failed. Exiting.")
+            print("\n[FAIL] Health check failed. Exiting.")
             return
         
         # Test 2: Create and list users
         users = test_create_users()
         if not users or len(users) == 0:
-            print("\n❌ User creation failed. Exiting.")
+            print("\n[FAIL] User creation failed. Exiting.")
             return
         
         all_users = test_list_users()
@@ -325,7 +325,7 @@ def main():
         sample_cipher = "encrypted_patient_data_example_12345"
         patient1 = test_create_patient(test_user_id, sample_cipher)
         if not patient1:
-            print("\n❌ Patient creation failed. Exiting.")
+            print("\n[FAIL] Patient creation failed. Exiting.")
             return
         
         # Test 4: Create patient with storage path
@@ -360,19 +360,19 @@ def main():
         test_soft_delete_patient(patient2['id'] if patient2 else patient1['id'])
         
         print_section("SUMMARY")
-        print("✓ All database tests completed successfully!")
+        print("[OK] All database tests completed successfully!")
         print("\nDatabase functionality verified:")
-        print("  ✓ User management")
-        print("  ✓ Patient records (ciphertext and storage_path)")
-        print("  ✓ Condition records")
-        print("  ✓ Encounter records")
-        print("  ✓ Account records")
-        print("  ✓ Record updates")
-        print("  ✓ Soft deletion")
-        print("  ✓ Data validation")
+        print("  [OK] User management")
+        print("  [OK] Patient records (ciphertext and storage_path)")
+        print("  [OK] Condition records")
+        print("  [OK] Encounter records")
+        print("  [OK] Account records")
+        print("  [OK] Record updates")
+        print("  [OK] Soft deletion")
+        print("  [OK] Data validation")
         
     except Exception as e:
-        print(f"\n❌ Test failed with exception: {e}")
+        print(f"\n[FAIL] Test failed with exception: {e}")
         import traceback
         traceback.print_exc()
 
