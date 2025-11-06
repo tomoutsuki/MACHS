@@ -1,0 +1,68 @@
+{
+  "9eee1730-5131-42e3-bd31-396021fc2e92": {
+    "id": "9eee1730-5131-42e3-bd31-396021fc2e92",
+    "type": "master",
+    "version": 1,
+    "creation_date": "2025-11-05T23:12:36Z",
+    "expiration": null,
+    "attributes": [],
+    "policy": "",
+    "status": "active",
+    "encrypted_key": null
+  },
+  "0902ba7c-69c5-4766-bf53-f83dc3867e5a": {
+    "id": "0902ba7c-69c5-4766-bf53-f83dc3867e5a",
+    "type": "data",
+    "version": 1,
+    "creation_date": "2025-11-05T23:12:36Z",
+    "expiration": "2026-02-03T23:12:36Z",
+    "attributes": [],
+    "policy": "(role:doctor AND dept:cardiology)",
+    "status": "active",
+    "encrypted_key": "SFZrPmfQRdp6m9rxXW5v1+Pxhyereb+r2uryuQ72yR6tumU3VUrDWYHnPs2YPUO+gqzGbMEvUF0NuNN/"
+  },
+  "cc257721-63a8-48c0-95f8-ffb9c4dd13bb": {
+    "id": "cc257721-63a8-48c0-95f8-ffb9c4dd13bb",
+    "type": "master",
+    "version": 1,
+    "creation_date": "2025-11-05T23:12:56Z",
+    "expiration": null,
+    "attributes": [],
+    "policy": "",
+    "status": "active",
+    "encrypted_key": null
+  },
+  "15575894-1ccf-4064-bb6b-9984da4eed4f": {
+    "id": "15575894-1ccf-4064-bb6b-9984da4eed4f",
+    "type": "data",
+    "version": 1,
+    "creation_date": "2025-11-05T23:12:56Z",
+    "expiration": "2026-02-03T23:12:56Z",
+    "attributes": [],
+    "policy": "(role:doctor AND dept:cardiology)",
+    "status": "active",
+    "encrypted_key": "WAp2hl3wg2fDCyB7kPQYlVgQuj3QrIfCU2iRM+jqwbsO+3yGOTd7ZGHNq+qSMIrrN6B79sDkOZiXR4Lc"
+  },
+  "99f2770b-d601-4fa1-9e4a-1b96cef3340d": {
+    "id": "99f2770b-d601-4fa1-9e4a-1b96cef3340d",
+    "type": "master",
+    "version": 1,
+    "creation_date": "2025-11-06T00:11:32Z",
+    "expiration": null,
+    "attributes": [],
+    "policy": "",
+    "status": "active",
+    "encrypted_key": null
+  },
+  "3266402b-22cc-4d6a-9cd0-a2f50b194683": {
+    "id": "3266402b-22cc-4d6a-9cd0-a2f50b194683",
+    "type": "data",
+    "version": 1,
+    "creation_date": "2025-11-06T00:11:33Z",
+    "expiration": "2026-02-04T00:11:33Z",
+    "attributes": [],
+    "policy": "(role:doctor AND dept:cardiology)",
+    "status": "active",
+    "encrypted_key": "w58T2gY9a+G9Vm4dLYDfoiQhKRP1IwI+pajSA2Y4f1o+/CH3u5fjqKlHJUBrdR7u734K1j9PnskZGUZn"
+  }
+}
